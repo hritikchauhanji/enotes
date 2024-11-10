@@ -33,14 +33,32 @@ public class ServiceImpl implements Services {
 //		category.setCreatedBy(categoryDto.getCreatedBy());
 //		category.setUpdatedBy(categoryDto.getUpdatedBy());
 		Category category = mapper.map(categoryDto, Category.class);
-		category.setIsDeleted(false);
+		if(ObjectUtils.isEmpty(category.getId())) {
+			category.setIsDeleted(false);
+			category.setCreatedBy(1);
 		category.setCreatedOn(new Date());
-		category.setUpdatedOn(new Date());
+//		category.setUpdatedOn(new Date());
+		} else {
+			updateCategory(category);
+		}
+		
 		Category save = categoryRepository.save(category);
 		if(ObjectUtils.isEmpty(save)) {
 			return false;
 		}
 		return true;
+	}
+
+	private void updateCategory(Category category) {
+		Optional<Category> findById = categoryRepository.findById(category.getId());
+		if(findById.isPresent()) {
+			Category existCategory = findById.get();
+			category.setCreatedBy(existCategory.getCreatedBy());
+			category.setCreatedOn(existCategory.getCreatedOn());
+			category.setIsDeleted(existCategory.getIsDeleted());
+			category.setUpdatedBy(1);
+			category.setUpdatedOn(new Date());
+		}
 	}
 
 	@Override
