@@ -12,7 +12,7 @@ public interface Services {
 
 	List<CategoryResponse> getAllActiveCategory();
 
-	CategoryDto getCategoryById(Integer id);
+	CategoryDto getCategoryById(Integer id) throws Exception;
 
 	Boolean DeleteCategoryById(Integer id);
 }
