@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.enotes.dto.CategoryDto;
 import com.enotes.dto.CategoryResponse;
 import com.enotes.entity.Category;
+import com.enotes.exceptionhandling.ResourceNotFoundException;
 import com.enotes.repository.CategoryRepository;
 import com.enotes.service.Services;
 
@@ -76,11 +77,15 @@ public class ServiceImpl implements Services {
 	}
 
 	@Override
-	public CategoryDto getCategoryById(Integer id) {
-		Optional<Category> category = categoryRepository.findByIdAndIsDeletedFalse(id);
-		if(category.isPresent()) {
-				CategoryDto categoryDto =  mapper.map(category, CategoryDto.class);
-				return categoryDto;
+	public CategoryDto getCategoryById(Integer id) throws Exception {
+		Category category = categoryRepository.findByIdAndIsDeletedFalse(id).orElseThrow(() -> new ResourceNotFoundException("Category not found by id = " + id));
+		if(!ObjectUtils.isEmpty(category)) {
+//			if(category.getName() == null) {
+//				throw new IllegalArgumentException("name is null");
+//			}
+			
+//			category.getName().toUpperCase();
+				return mapper.map(category, CategoryDto.class);
 		}
 
 		return null;
