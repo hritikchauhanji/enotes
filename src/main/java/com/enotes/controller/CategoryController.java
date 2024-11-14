@@ -17,8 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.enotes.dto.CategoryDto;
 import com.enotes.dto.CategoryResponse;
-import com.enotes.entity.Category;
-import com.enotes.exceptionhandling.ResourceNotFoundException;
 import com.enotes.service.Services;
 
 @RestController

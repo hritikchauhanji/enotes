@@ -13,8 +13,10 @@ import com.enotes.dto.CategoryDto;
 import com.enotes.dto.CategoryResponse;
 import com.enotes.entity.Category;
 import com.enotes.exceptionhandling.ResourceNotFoundException;
+import com.enotes.exceptionhandling.ValidationException;
 import com.enotes.repository.CategoryRepository;
 import com.enotes.service.Services;
+import com.enotes.util.Validation;
 
 @Service
 public class ServiceImpl implements Services {
@@ -24,6 +26,9 @@ public class ServiceImpl implements Services {
 	
 	@Autowired
 	private ModelMapper mapper;
+	
+	@Autowired
+	private Validation validation;
 
 	@Override
 	public Boolean saveCategory(CategoryDto categoryDto) {
@@ -32,7 +37,11 @@ public class ServiceImpl implements Services {
 //		category.setDescription(categoryDto.getDescription());
 //		category.setIsActive(categoryDto.getIsActive());
 //		category.setCreatedBy(categoryDto.getCreatedBy());
-//		category.setUpdatedBy(categoryDto.getUpdatedBy());
+//		category.setUpdatedBy(categoryDto.getUpdatedBy()); 
+		
+		//validation checking :-
+		validation.categoryValidation(categoryDto);
+		
 		Category category = mapper.map(categoryDto, Category.class);
 		if(ObjectUtils.isEmpty(category.getId())) {
 			category.setIsDeleted(false);
