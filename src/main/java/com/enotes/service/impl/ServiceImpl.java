@@ -45,8 +45,8 @@ public class ServiceImpl implements Services {
 		Category category = mapper.map(categoryDto, Category.class);
 		if(ObjectUtils.isEmpty(category.getId())) {
 			category.setIsDeleted(false);
-			category.setCreatedBy(1);
-		category.setCreatedOn(new Date());
+//			category.setCreatedBy(1);
+//		category.setCreatedOn(new Date());
 //		category.setUpdatedOn(new Date());
 		} else {
 			updateCategory(category);
@@ -66,8 +66,8 @@ public class ServiceImpl implements Services {
 			category.setCreatedBy(existCategory.getCreatedBy());
 			category.setCreatedOn(existCategory.getCreatedOn());
 			category.setIsDeleted(existCategory.getIsDeleted());
-			category.setUpdatedBy(1);
-			category.setUpdatedOn(new Date());
+//			category.setUpdatedBy(1);
+//			category.setUpdatedOn(new Date());
 		}
 	}
 
