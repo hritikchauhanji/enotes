@@ -22,8 +22,8 @@ public class Validation {
 			if(ObjectUtils.isEmpty(categoryDto.getName())) {
 				error.put("name", "Name shouldn't be null or empty");
 			} else  {
-				if(categoryDto.getName().length()<10) {
-					error.put("name", "Name shouldn't be less than 10");
+				if(categoryDto.getName().length()<3) {
+					error.put("name", "Name shouldn't be less than 3");
 				} 
 				if(categoryDto.getName().length()>100) {
 					error.put("name", "Name shouldn't be greater than 100");
