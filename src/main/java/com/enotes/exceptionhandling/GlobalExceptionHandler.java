@@ -32,4 +32,9 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<?> handleValidationException(ValidationException e) {
 		return new ResponseEntity<>(e.getErrors(),HttpStatus.NOT_FOUND);
 	}
+	
+	@ExceptionHandler(ExistDataException.class)
+	public ResponseEntity<?> handleExistDataException(ExistDataException e) {
+		return new ResponseEntity<>(e.getMessage(),HttpStatus.CONFLICT);
+	}
 }

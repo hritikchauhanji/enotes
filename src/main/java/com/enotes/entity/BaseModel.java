@@ -22,7 +22,7 @@ public abstract class BaseModel {
 	private Integer createdBy;
 
 	@CreatedDate
-	@Column(updatable = true)
+	@Column(updatable = false)
 	private Date createdOn;
 
 	@LastModifiedBy
