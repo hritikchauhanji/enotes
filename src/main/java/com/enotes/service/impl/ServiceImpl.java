@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.enotes.dto.CategoryDto;
 import com.enotes.dto.CategoryResponse;
 import com.enotes.entity.Category;
+import com.enotes.exceptionhandling.ExistDataException;
 import com.enotes.exceptionhandling.ResourceNotFoundException;
 import com.enotes.exceptionhandling.ValidationException;
 import com.enotes.repository.CategoryRepository;
@@ -41,6 +42,13 @@ public class ServiceImpl implements Services {
 		
 		//validation checking :-
 		validation.categoryValidation(categoryDto);
+		
+		// check category exist or not :-
+		Boolean existsByName = categoryRepository.existsByName(categoryDto.getName().trim());
+		
+		if(existsByName) {
+			throw new ExistDataException("Category is already exists...");
+		}
 		
 		Category category = mapper.map(categoryDto, Category.class);
 		if(ObjectUtils.isEmpty(category.getId())) {
