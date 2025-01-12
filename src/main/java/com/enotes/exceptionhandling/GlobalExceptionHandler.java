@@ -1,5 +1,7 @@
 package com.enotes.exceptionhandling;
 
+import java.io.FileNotFoundException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -43,5 +45,11 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<?> handleExistDataException(ExistDataException e) {
 //		return new ResponseEntity<>(e.getMessage(),HttpStatus.CONFLICT);
 		return CommonUtil.createErrorResponseMessage(e.getMessage(), HttpStatus.CONFLICT);
+	}
+	
+	@ExceptionHandler(FileNotFoundException.class)
+	public ResponseEntity<?> handleFileNotFoundException(FileNotFoundException e) {
+//		return new ResponseEntity<>(e.getMessage(),HttpStatus.CONFLICT);
+		return CommonUtil.createErrorResponseMessage(e.getMessage(), HttpStatus.NOT_FOUND);
 	}
 }
