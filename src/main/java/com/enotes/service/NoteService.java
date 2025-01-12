@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.enotes.dto.NoteDto;
+import com.enotes.dto.NoteResponse;
+import com.enotes.entity.FileDetails;
 
 public interface NoteService {
 
@@ -13,4 +15,10 @@ public interface NoteService {
 	List<NoteDto> getAllNotes();
 	
 	NoteDto getNoteById(Integer id);
+
+	byte[] downloadFile(FileDetails fileDtls) throws Exception;
+
+	FileDetails getFileDetails(Integer id) throws Exception;
+
+	NoteResponse getAllNotesByUser(Integer userId, Integer pageNo, Integer pageSize);
 }
