@@ -59,6 +59,11 @@ public class NoteServiceImpl implements NoteService {
 		ObjectMapper ob = new ObjectMapper();
 		NoteDto noteDto = ob.readValue(notes, NoteDto.class);
 		
+		noteDto.setIsDeleted(false);
+		noteDto.setDeletedOn(null);
+		
+		
+		// update notes
 		if(!ObjectUtils.isEmpty(noteDto.getId())) {
 			updateNotes(noteDto,file);
 		}
