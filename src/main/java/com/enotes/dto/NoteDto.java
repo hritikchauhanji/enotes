@@ -20,7 +20,7 @@ public class NoteDto {
 	private String description;
 
 	private CategoryDto category;
-	
+
 	private Integer createdBy;
 
 	private Date createdOn;
@@ -28,27 +28,31 @@ public class NoteDto {
 	private Integer updatedBy;
 
 	private Date updatedOn;
-	
+
 	private FileDto fileDetails;
-	
+
+	private Boolean isDeleted;
+
+	private Date deletedOn;
+
 	@Getter
 	@Setter
 	@AllArgsConstructor
 	@NoArgsConstructor
-	public static class FileDto{
-		
+	public static class FileDto {
+
 		private String OriginalFileName;
-		
+
 		private String displayFileName;
-		
+
 	}
-	
+
 	@Getter
 	@Setter
 	@AllArgsConstructor
 	@NoArgsConstructor
-	public static class CategoryDto{
-		
+	public static class CategoryDto {
+
 		private Integer id;
 
 		private String name;
