@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import org.apache.commons.io.FilenameUtils;
 import org.modelmapper.ModelMapper;
@@ -26,14 +27,17 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.enotes.dto.FavouriteNotesDto;
 import com.enotes.dto.NoteDto;
 import com.enotes.dto.NoteDto.CategoryDto;
 import com.enotes.dto.NoteDto.FileDto;
 import com.enotes.dto.NoteResponse;
+import com.enotes.entity.FavouriteNotes;
 import com.enotes.entity.FileDetails;
 import com.enotes.entity.Notes;
 import com.enotes.exceptionhandling.ResourceNotFoundException;
 import com.enotes.repository.CategoryRepository;
+import com.enotes.repository.FavouriteNoteRepository;
 import com.enotes.repository.FileRepository;
 import com.enotes.repository.NoteRepository;
 import com.enotes.service.NoteService;
@@ -56,6 +60,9 @@ public class NoteServiceImpl implements NoteService {
 
 	@Autowired
 	private FileRepository fileRepository;
+	
+	@Autowired
+	private FavouriteNoteRepository favouriteNoteRepository;
 
 	@Override
 	public Boolean saveNote(String notes, MultipartFile file) throws Exception {
@@ -243,12 +250,36 @@ public class NoteServiceImpl implements NoteService {
 		}
 	}
 
+
 	@Override
 	public void emptyRecycle(int userId) {
 		List<Notes> notes = noteRepository.findByCreatedByAndIsDeletedTrue(userId);
 		if(!CollectionUtils.isEmpty(notes)) {
 			noteRepository.deleteAll(notes);
 		}
+	}
+	
+
+	@Override
+	public void favouriteNotes(Integer noteId) throws Exception {
+		Integer userId = 1;
+		Notes note = noteRepository.findById(noteId).orElseThrow(()-> new ResourceNotFoundException("Notes not available..."));
+		FavouriteNotes favouriteNote = FavouriteNotes.builder().note(note).userId(userId).build();
+		favouriteNoteRepository.save(favouriteNote);
+	}
+
+	@Override
+	public void unFavouriteNotes(Integer favouriteNoteId) throws Exception{
+		FavouriteNotes note = favouriteNoteRepository.findById(favouriteNoteId).orElseThrow(()-> new ResourceNotFoundException("Favourite Notes not available.."));
+		favouriteNoteRepository.delete(note);
+	}
+
+	@Override
+	public List<FavouriteNotesDto> getUserFavouriteNotes() {
+		int userId = 1;
+		List<FavouriteNotes> notes = favouriteNoteRepository.findByUserId(userId);
+		List<FavouriteNotesDto> favouriteNotes = notes.stream().map(note -> mapper.map(note, FavouriteNotesDto.class)).toList();
+		return favouriteNotes;
 	}
 
 }
