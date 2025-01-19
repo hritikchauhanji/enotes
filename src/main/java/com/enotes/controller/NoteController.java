@@ -87,11 +87,12 @@ public class NoteController {
 		return CommonUtil.createBuildResponse(allNotes, HttpStatus.OK);
 	}
 	
-	@DeleteMapping("/delete/{id}")
+	@GetMapping("/delete/{id}")
 	ResponseEntity<?> deleteNotes(@PathVariable Integer id) throws Exception{
 		noteService.softDeleteNotes(id);
 		return CommonUtil.createBuildResponseMessage("Delete Success", HttpStatus.OK);
 	}
+	
 	@GetMapping("/restore/{id}")
 	ResponseEntity<?> restoreNotes(@PathVariable Integer id) throws Exception{
 		noteService.restoreNotes(id);
@@ -106,6 +107,19 @@ public class NoteController {
 			return ResponseEntity.noContent().build();
 		}
 		return CommonUtil.createBuildResponse(notes, HttpStatus.OK);
+	}
+	
+	@DeleteMapping("/delete/{id}")
+	ResponseEntity<?> hardDeleteNotes(@PathVariable Integer id) throws Exception{
+		noteService.hardDeleteNotes(id);
+		return CommonUtil.createBuildResponseMessage("Delete Success", HttpStatus.OK);
+	}
+	
+	@DeleteMapping("/delete-recycle")
+	ResponseEntity<?> emptyRecycle() throws Exception{
+		int userId = 1;
+		noteService.emptyRecycle(userId);
+		return CommonUtil.createBuildResponseMessage("Delete Recycle with userId = " + userId + " Success", HttpStatus.OK);
 	}
 
 }

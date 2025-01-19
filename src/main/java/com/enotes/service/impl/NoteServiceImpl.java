@@ -5,7 +5,10 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -18,6 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -186,7 +190,7 @@ public class NoteServiceImpl implements NoteService {
 	@Override
 	public NoteResponse getAllNotesByUser(Integer userId, Integer pageNo, Integer pageSize) {
 		Pageable pageable = PageRequest.of(pageNo, pageSize);
-		Page<Notes> pageNotes = noteRepository.findByCreatedBy(userId,pageable);
+		Page<Notes> pageNotes = noteRepository.findByCreatedByAndIsDeletedFalse(userId,pageable);
 		List<NoteDto> noteDto = pageNotes.get().map(n -> mapper.map(n, NoteDto.class)).toList();
 		NoteResponse notes = NoteResponse.builder()
 				.notes(noteDto)
@@ -199,6 +203,52 @@ public class NoteServiceImpl implements NoteService {
 				.build();
 		
 		return notes;
+	}
+
+	@Override
+	public void softDeleteNotes(Integer id) throws Exception {
+		Notes note = noteRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Invalid Id..."));
+		if(!ObjectUtils.isEmpty(note)) {
+			note.setIsDeleted(true);
+			note.setDeletedOn(LocalDateTime.now());
+			noteRepository.save(note);
+		}
+	}
+
+	@Override
+	public void restoreNotes(Integer id) throws Exception {
+		Notes note = noteRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Invalid id..."));
+		if(!ObjectUtils.isEmpty(note)) {
+			note.setIsDeleted(false);
+			note.setDeletedOn(null);
+			noteRepository.save(note);
+		}
+	}
+
+	@Override
+	public List<NoteDto> getUserRecycleBinNotes(Integer userId) {
+		List<Notes> notes = noteRepository.findByCreatedByAndIsDeletedTrue(userId);
+		List<NoteDto> list = notes.stream().map(note->mapper.map(note, NoteDto.class)).toList();
+		return list;
+	}
+
+	@Override
+	public void hardDeleteNotes(Integer id) throws Exception {
+		Notes notes = noteRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Invalid Id..."));
+		
+		if(notes.getIsDeleted()) {
+			noteRepository.delete(notes);
+		} else {
+			throw new IllegalArgumentException("Sorry You can't hard delete directly");
+		}
+	}
+
+	@Override
+	public void emptyRecycle(int userId) {
+		List<Notes> notes = noteRepository.findByCreatedByAndIsDeletedTrue(userId);
+		if(!CollectionUtils.isEmpty(notes)) {
+			noteRepository.deleteAll(notes);
+		}
 	}
 
 }
