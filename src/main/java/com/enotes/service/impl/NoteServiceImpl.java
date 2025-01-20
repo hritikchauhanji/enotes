@@ -282,4 +282,16 @@ public class NoteServiceImpl implements NoteService {
 		return favouriteNotes;
 	}
 
+	@Override
+	public Boolean copyNotes(Integer id) throws Exception {
+		Notes notes = noteRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Invalid id..."));
+		
+		Notes copyNotes = Notes.builder().title(notes.getTitle()).description(notes.getDescription()).category(notes.getCategory()).isDeleted(false).fileDetails(null).build();
+		Notes save = noteRepository.save(copyNotes);
+		if(!ObjectUtils.isEmpty(save)) {
+			return true;
+		}
+		return false;
+	}
+
 }

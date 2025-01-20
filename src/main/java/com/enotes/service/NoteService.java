@@ -38,4 +38,6 @@ public interface NoteService {
 	void unFavouriteNotes(Integer noteId) throws Exception;
 	
 	List<FavouriteNotesDto> getUserFavouriteNotes();
+
+	Boolean copyNotes(Integer id) throws Exception;
 }
