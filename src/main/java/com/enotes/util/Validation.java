@@ -15,15 +15,20 @@ import com.enotes.dto.TodoDto;
 import com.enotes.dto.TodoDto.StatusDto;
 import com.enotes.dto.UserDto;
 import com.enotes.enums.TodoStatus;
+import com.enotes.exceptionhandling.ExistDataException;
 import com.enotes.exceptionhandling.ResourceNotFoundException;
 import com.enotes.exceptionhandling.ValidationException;
 import com.enotes.repository.RoleRepository;
+import com.enotes.repository.UserRepository;
 
 @Component
 public class Validation {
 	
 	@Autowired
 	private RoleRepository roleRepository;
+	
+	@Autowired
+	private UserRepository userRepository;
 	
 	public void categoryValidation(CategoryDto categoryDto) {
 		Map<String, Object> error = new LinkedHashMap<>();
@@ -93,6 +98,11 @@ public class Validation {
 		
 		if(!StringUtils.hasText(userDto.getEmail()) && !userDto.getEmail().matches(ConstantUtil.Email_Regex)) {
 			throw new IllegalArgumentException("Email is Invalid...");
+		} else {
+			Boolean existsByEmail = userRepository.existsByEmail(userDto.getEmail());
+			if(existsByEmail) {
+				throw new ExistDataException("Email is already registered");
+			}
 		}
 		
 		if(!StringUtils.hasText(userDto.getMobNo()) && !userDto.getEmail().matches(ConstantUtil.Mobile_No_Regex)) {
