@@ -4,5 +4,5 @@ import com.enotes.dto.UserDto;
 
 public interface UserService {
 
-	Boolean registerUser(UserDto userDto) throws Exception;
+	Boolean registerUser(UserDto userDto, String url) throws Exception;
 }
