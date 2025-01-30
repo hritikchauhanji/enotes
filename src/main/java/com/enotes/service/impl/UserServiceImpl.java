@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
@@ -46,6 +47,9 @@ public class UserServiceImpl implements UserService {
 	
 	@Autowired
 	private AuthenticationManager authenticationManager;
+	
+	@Autowired
+	private BCryptPasswordEncoder bCryptPasswordEncoder;
 
 	@Override
 	public Boolean registerUser(UserDto userDto,String url) throws Exception {
@@ -59,6 +63,7 @@ public class UserServiceImpl implements UserService {
 				.verificationCode(UUID.randomUUID().toString())
 				.build();
 		user.setStatus(status);
+		user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
 		userRepository.save(user);
 		if(!ObjectUtils.isEmpty(user)) {
 			//send Email
