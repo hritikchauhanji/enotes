@@ -12,13 +12,12 @@ import com.enotes.entity.User;
 
 public class CustomUserDetails implements UserDetails{
 
+	private User user;
 	
 	public CustomUserDetails(User user) {
 		super();
 		this.user = user;
 	}
-
-	private User user;
 	
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -39,5 +38,15 @@ public class CustomUserDetails implements UserDetails{
 	public String getUsername() {
 		return user.getEmail();
 	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+	
+	
 
 }

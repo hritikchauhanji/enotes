@@ -5,10 +5,16 @@ import java.util.UUID;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
+import com.enotes.config.security.CustomUserDetails;
 import com.enotes.dto.EmailRequest;
+import com.enotes.dto.LoginRequest;
+import com.enotes.dto.LoginResponse;
 import com.enotes.dto.UserDto;
 import com.enotes.entity.AccountStatus;
 import com.enotes.entity.Role;
@@ -21,6 +27,8 @@ import com.enotes.util.Validation;
 @Service
 public class UserServiceImpl implements UserService {
 	
+	
+
 	@Autowired
 	private Validation validation;
 	
@@ -35,6 +43,9 @@ public class UserServiceImpl implements UserService {
 	
 	@Autowired
 	private EmailService emailService;
+	
+	@Autowired
+	private AuthenticationManager authenticationManager;
 
 	@Override
 	public Boolean registerUser(UserDto userDto,String url) throws Exception {
@@ -81,6 +92,27 @@ public class UserServiceImpl implements UserService {
 		List<Integer> reqRoleId = userDto.getRoles().stream().map(r->r.getId()).toList();
 		List<Role> roles = roleRepository.findAllById(reqRoleId);
 		user.setRoles(roles);
+	}
+	
+	
+	@Override
+	public LoginResponse login(LoginRequest request) {
+		Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+		
+		if(authenticate.isAuthenticated()) {
+			CustomUserDetails customUserDetails = (CustomUserDetails)authenticate.getPrincipal();
+			
+			String token = "sjhdisadjaksdaidsi";
+			
+			LoginResponse response = LoginResponse.builder()
+					.token(token)
+					.user(mapper.map(customUserDetails.getUser(), UserDto.class))
+					.build();
+			
+			return response;
+		}
+		
+		return null;
 	}
 
 }
