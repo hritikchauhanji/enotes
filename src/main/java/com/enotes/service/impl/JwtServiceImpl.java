@@ -9,11 +9,13 @@ import java.util.Map;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import com.enotes.entity.User;
 import com.enotes.service.JwtService;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -59,5 +61,39 @@ public class JwtServiceImpl implements JwtService {
 		byte[] keyBytes = Decoders.BASE64.decode(secretKey);
 		return Keys.hmacShaKeyFor(keyBytes);
 	}
+
+	@Override
+	public String extractUsername(String token) {
+		Claims claims = extractAllClaims(token);
+		return null;
+	}
+
+	private Claims extractAllClaims(String token) {
+		Claims claims = Jwts.parser()
+		.verifyWith(decrytKey(secretKey))
+		.build()
+		.parseSignedClaims(token)
+		.getPayload();
+		return claims;
+	}
+
+	private SecretKey decrytKey(String secretKey) {
+		byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+		return Keys.hmacShaKeyFor(keyBytes);
+	}
+
+	@Override
+	public Boolean validateToken(String token, UserDetails userDetails) {
+		String username = extractUsername(token);
+		Boolean isExpired = isTokenExpired(token);
+		return null;
+	}
+
+	private Boolean isTokenExpired(String token) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	
 
 }
