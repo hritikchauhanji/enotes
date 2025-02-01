@@ -42,6 +42,7 @@ public class JwtServiceImpl implements JwtService {
 	public String generateToken(User user) {
 		
 		Map<String, Object> claims = new HashMap<>();
+		claims.put("id",user.getId());
 		claims.put("role", user.getRoles());
 		claims.put("status", user.getStatus().getIsActive());
 		
@@ -65,7 +66,7 @@ public class JwtServiceImpl implements JwtService {
 	@Override
 	public String extractUsername(String token) {
 		Claims claims = extractAllClaims(token);
-		return null;
+		return claims.getSubject();
 	}
 
 	private Claims extractAllClaims(String token) {
@@ -81,17 +82,28 @@ public class JwtServiceImpl implements JwtService {
 		byte[] keyBytes = Decoders.BASE64.decode(secretKey);
 		return Keys.hmacShaKeyFor(keyBytes);
 	}
+	
+	public String role(String token) {
+		Claims claims = extractAllClaims(token);
+		return (String)claims.get("role");
+	}
 
 	@Override
 	public Boolean validateToken(String token, UserDetails userDetails) {
 		String username = extractUsername(token);
 		Boolean isExpired = isTokenExpired(token);
-		return null;
+		
+		if(username.equalsIgnoreCase(userDetails.getUsername()) && !isExpired) {
+			return true;
+		}
+		return false;
 	}
 
 	private Boolean isTokenExpired(String token) {
-		// TODO Auto-generated method stub
-		return null;
+		Claims claims = extractAllClaims(token);
+		Date expiration = claims.getExpiration();
+		// for expire date 
+		return expiration.before(new Date());
 	}
 	
 	
