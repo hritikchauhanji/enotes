@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -27,7 +28,8 @@ public class CategoryController {
 	@Autowired
 	private Services services;
 
-	@PostMapping("/save-category")
+	@PostMapping("/save")
+//	@PreAuthorize("hasRole('ADMIN')")
 	ResponseEntity<?> saveCategory(@RequestBody CategoryDto categoryDto) {
 		Boolean saveCategory = services.saveCategory(categoryDto);
 		if (saveCategory) {
