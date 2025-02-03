@@ -28,8 +28,8 @@ public class CategoryController {
 	@Autowired
 	private Services services;
 
-	@PostMapping("/save")
-//	@PreAuthorize("hasRole('ADMIN')")
+	@PostMapping("/")
+	@PreAuthorize("hasRole('ADMIN')")
 	ResponseEntity<?> saveCategory(@RequestBody CategoryDto categoryDto) {
 		Boolean saveCategory = services.saveCategory(categoryDto);
 		if (saveCategory) {
@@ -42,6 +42,7 @@ public class CategoryController {
 	}
 
 	@GetMapping("/getAll")
+	@PreAuthorize("hasRole('ADMIN')")
 	ResponseEntity<?> getAllCategory() {
 		List<CategoryDto> getAll = services.getAllCategory();
 		if (CollectionUtils.isEmpty(getAll)) {
