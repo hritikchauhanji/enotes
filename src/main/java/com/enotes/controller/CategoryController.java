@@ -28,7 +28,7 @@ public class CategoryController {
 	@Autowired
 	private Services services;
 
-	@PostMapping("/")
+	@PostMapping("/save")
 	@PreAuthorize("hasRole('ADMIN')")
 	ResponseEntity<?> saveCategory(@RequestBody CategoryDto categoryDto) {
 		Boolean saveCategory = services.saveCategory(categoryDto);
@@ -41,7 +41,7 @@ public class CategoryController {
 		}
 	}
 
-	@GetMapping("/getAll")
+	@GetMapping("/")
 	@PreAuthorize("hasRole('ADMIN')")
 	ResponseEntity<?> getAllCategory() {
 		List<CategoryDto> getAll = services.getAllCategory();
@@ -54,6 +54,7 @@ public class CategoryController {
 	}
 
 	@GetMapping("/active")
+	@PreAuthorize("hasAnyRole('USER','ADMIN')")
 	ResponseEntity<?> getActiveCategory() {
 		List<CategoryResponse> getAll = services.getAllActiveCategory();
 		if (CollectionUtils.isEmpty(getAll)) {
@@ -65,6 +66,7 @@ public class CategoryController {
 	}
 
 	@GetMapping("/{id}")
+	@PreAuthorize("hasRole('ADMIN')")
 	ResponseEntity<?> getCategoryById(@PathVariable Integer id) throws Exception {
 		CategoryDto categoryDto = services.getCategoryById(id);
 		if (ObjectUtils.isEmpty(categoryDto)) {
@@ -90,6 +92,7 @@ public class CategoryController {
 	}
 
 	@DeleteMapping("/{id}")
+	@PreAuthorize("hasRole('ADMIN')")
 	ResponseEntity<?> deleteCategoryById(@PathVariable Integer id) {
 		Boolean deleted = services.DeleteCategoryById(id);
 		if (deleted) {

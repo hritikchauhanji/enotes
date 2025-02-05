@@ -19,7 +19,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/api/v1/auth")
-public class UserController {
+public class AuthController {
 	
 	@Autowired
 	private UserService userService;
