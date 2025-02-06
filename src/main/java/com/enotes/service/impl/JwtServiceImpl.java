@@ -13,9 +13,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import com.enotes.entity.User;
+import com.enotes.exceptionhandling.JwtAuthenticationException;
+import com.enotes.exceptionhandling.JwtTokenExpiredException;
 import com.enotes.service.JwtService;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -46,8 +50,7 @@ public class JwtServiceImpl implements JwtService {
 
 		String token = Jwts.builder().claims().add(claims).subject(user.getEmail())
 				.issuedAt(new Date(System.currentTimeMillis()))
-				.expiration(new Date(System.currentTimeMillis() + 60 * 60 * 60 * 10)).and().signWith(getKey())
-				.compact();
+				.expiration(new Date(System.currentTimeMillis() + 60 * 60 * 10)).and().signWith(getKey()).compact();
 
 		return token;
 	}
@@ -66,6 +69,10 @@ public class JwtServiceImpl implements JwtService {
 	private Claims extractAllClaims(String token) {
 		try {
 			return Jwts.parser().verifyWith(decrytKey(secretKey)).build().parseSignedClaims(token).getPayload();
+		} catch (ExpiredJwtException e) {
+			throw new JwtTokenExpiredException("Token is Expired...");
+		} catch (JwtException e) {
+			throw new JwtAuthenticationException("Invalid Jwt Token...");
 		} catch (Exception e) {
 			throw e;
 		}
