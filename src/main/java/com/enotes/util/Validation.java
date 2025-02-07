@@ -13,7 +13,7 @@ import org.springframework.util.StringUtils;
 import com.enotes.dto.CategoryDto;
 import com.enotes.dto.TodoDto;
 import com.enotes.dto.TodoDto.StatusDto;
-import com.enotes.dto.UserDto;
+import com.enotes.dto.UserRequest;
 import com.enotes.enums.TodoStatus;
 import com.enotes.exceptionhandling.ExistDataException;
 import com.enotes.exceptionhandling.ResourceNotFoundException;
@@ -84,41 +84,41 @@ public class Validation {
 		}
 	}
 	
-	public void userRegisterValidation(UserDto userDto) throws Exception{
+	public void userRegisterValidation(UserRequest userRequest) throws Exception{
 		
 		
 		// validation of firstname:-
-		if(!StringUtils.hasText(userDto.getFirstName())) {
+		if(!StringUtils.hasText(userRequest.getFirstName())) {
 			throw new IllegalArgumentException("First Name is Invalid...");
 		}
 		
-		if(!StringUtils.hasText(userDto.getLastName())) {
+		if(!StringUtils.hasText(userRequest.getLastName())) {
 			throw new IllegalArgumentException("Last Name is Invalid...");
 		}
 		
-		if(!StringUtils.hasText(userDto.getEmail()) && !userDto.getEmail().matches(ConstantUtil.Email_Regex)) {
+		if(!StringUtils.hasText(userRequest.getEmail()) && !userRequest.getEmail().matches(ConstantUtil.Email_Regex)) {
 			throw new IllegalArgumentException("Email is Invalid...");
 		} else {
-			Boolean existsByEmail = userRepository.existsByEmail(userDto.getEmail());
+			Boolean existsByEmail = userRepository.existsByEmail(userRequest.getEmail());
 			if(existsByEmail) {
 				throw new ExistDataException("Email is already registered");
 			}
 		}
 		
-		if(!StringUtils.hasText(userDto.getMobNo()) && !userDto.getEmail().matches(ConstantUtil.Mobile_No_Regex)) {
+		if(!StringUtils.hasText(userRequest.getMobNo()) && !userRequest.getEmail().matches(ConstantUtil.Mobile_No_Regex)) {
 			throw new IllegalArgumentException("Mobile No is Invalid...");
 		}
 		
-		if(!StringUtils.hasText(userDto.getPassword()) && !userDto.getPassword().matches(ConstantUtil.Password_Regex)) {
+		if(!StringUtils.hasText(userRequest.getPassword()) && !userRequest.getPassword().matches(ConstantUtil.Password_Regex)) {
 			throw new IllegalArgumentException("Password is Invalid...");
 		}
 		
-		if(CollectionUtils.isEmpty(userDto.getRoles())) {
+		if(CollectionUtils.isEmpty(userRequest.getRoles())) {
 			throw new IllegalArgumentException("Roles are Invalid...");
 		} else {
 			List<Integer> roleIds = roleRepository.findAll().stream().map(r->r.getId()).toList();
 			
-			List<Integer> reqRoleIds =  userDto.getRoles().stream().map(r->r.getId()).filter(roleId -> !roleIds.contains(roleId)).toList();
+			List<Integer> reqRoleIds =  userRequest.getRoles().stream().map(r->r.getId()).filter(roleId -> !roleIds.contains(roleId)).toList();
 			
 			if(!CollectionUtils.isEmpty(reqRoleIds)) {
 				throw new IllegalArgumentException("Roles are Invalid = " + reqRoleIds);
