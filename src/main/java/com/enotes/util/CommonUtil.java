@@ -3,7 +3,10 @@ package com.enotes.util;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 
+import com.enotes.config.security.CustomUserDetails;
+import com.enotes.entity.User;
 import com.enotes.handler.GenericResponse;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -56,5 +59,10 @@ public class CommonUtil {
 		String apiUrl = request.getRequestURL().toString();
 		apiUrl = apiUrl.replace(request.getServletPath(), "");
 		return apiUrl;
+	}
+	
+	public static User getLoggedInUser() {
+		CustomUserDetails logUser = (CustomUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		return logUser.getUser();
 	}
 }

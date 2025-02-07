@@ -16,7 +16,7 @@ import com.enotes.config.security.CustomUserDetails;
 import com.enotes.dto.EmailRequest;
 import com.enotes.dto.LoginRequest;
 import com.enotes.dto.LoginResponse;
-import com.enotes.dto.UserDto;
+import com.enotes.dto.UserRequest;
 import com.enotes.entity.AccountStatus;
 import com.enotes.entity.Role;
 import com.enotes.entity.User;
@@ -56,12 +56,12 @@ public class UserServiceImpl implements UserService {
 	private JwtService jwtService;
 
 	@Override
-	public Boolean registerUser(UserDto userDto,String url) throws Exception {
+	public Boolean registerUser(UserRequest userRequest,String url) throws Exception {
 		// validation
-		validation.userRegisterValidation(userDto);
+		validation.userRegisterValidation(userRequest);
 		
-		User user = mapper.map(userDto, User.class);
-		setRole(userDto, user);
+		User user = mapper.map(userRequest, User.class);
+		setRole(userRequest, user);
 		AccountStatus status =  AccountStatus.builder()
 				.isActive(false)
 				.verificationCode(UUID.randomUUID().toString())
@@ -97,8 +97,8 @@ public class UserServiceImpl implements UserService {
 		emailService.sendEmail(emailRequest);
 	}
 
-	private void setRole(UserDto userDto, User user) {
-		List<Integer> reqRoleId = userDto.getRoles().stream().map(r->r.getId()).toList();
+	private void setRole(UserRequest userRequest, User user) {
+		List<Integer> reqRoleId = userRequest.getRoles().stream().map(r->r.getId()).toList();
 		List<Role> roles = roleRepository.findAllById(reqRoleId);
 		user.setRoles(roles);
 	}
@@ -115,7 +115,7 @@ public class UserServiceImpl implements UserService {
 			
 			LoginResponse response = LoginResponse.builder()
 					.token(token)
-					.user(mapper.map(customUserDetails.getUser(), UserDto.class))
+					.user(mapper.map(customUserDetails.getUser(), UserRequest.class))
 					.build();
 			
 			return response;

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.enotes.dto.LoginRequest;
 import com.enotes.dto.LoginResponse;
-import com.enotes.dto.UserDto;
+import com.enotes.dto.UserRequest;
 import com.enotes.service.UserService;
 import com.enotes.util.CommonUtil;
 
@@ -25,9 +25,9 @@ public class AuthController {
 	private UserService userService;
 
 	@PostMapping
-	ResponseEntity<?> register(@RequestBody UserDto userDto, HttpServletRequest request) throws Exception{
+	ResponseEntity<?> register(@RequestBody UserRequest userRequest, HttpServletRequest request) throws Exception{
 		String url = CommonUtil.getUrl(request);
-		Boolean registerUser = userService.registerUser(userDto,url);
+		Boolean registerUser = userService.registerUser(userRequest,url);
 		if(registerUser) {
 			return CommonUtil.createBuildResponseMessage("Registration Successful...", HttpStatus.CREATED);
 		}
