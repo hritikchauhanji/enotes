@@ -41,6 +41,7 @@ import com.enotes.repository.FavouriteNoteRepository;
 import com.enotes.repository.FileRepository;
 import com.enotes.repository.NoteRepository;
 import com.enotes.service.NoteService;
+import com.enotes.util.CommonUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
@@ -195,7 +196,8 @@ public class NoteServiceImpl implements NoteService {
 	}
 
 	@Override
-	public NoteResponse getAllNotesByUser(Integer userId, Integer pageNo, Integer pageSize) {
+	public NoteResponse getAllNotesByUser(Integer pageNo, Integer pageSize) {
+		Integer userId = CommonUtil.getLoggedInUser().getId();
 		Pageable pageable = PageRequest.of(pageNo, pageSize);
 		Page<Notes> pageNotes = noteRepository.findByCreatedByAndIsDeletedFalse(userId,pageable);
 		List<NoteDto> noteDto = pageNotes.get().map(n -> mapper.map(n, NoteDto.class)).toList();
@@ -233,7 +235,8 @@ public class NoteServiceImpl implements NoteService {
 	}
 
 	@Override
-	public List<NoteDto> getUserRecycleBinNotes(Integer userId) {
+	public List<NoteDto> getUserRecycleBinNotes() {
+		Integer userId = CommonUtil.getLoggedInUser().getId();
 		List<Notes> notes = noteRepository.findByCreatedByAndIsDeletedTrue(userId);
 		List<NoteDto> list = notes.stream().map(note->mapper.map(note, NoteDto.class)).toList();
 		return list;
@@ -252,7 +255,8 @@ public class NoteServiceImpl implements NoteService {
 
 
 	@Override
-	public void emptyRecycle(int userId) {
+	public void emptyRecycle() {
+		Integer userId = CommonUtil.getLoggedInUser().getId();
 		List<Notes> notes = noteRepository.findByCreatedByAndIsDeletedTrue(userId);
 		if(!CollectionUtils.isEmpty(notes)) {
 			noteRepository.deleteAll(notes);
@@ -262,7 +266,7 @@ public class NoteServiceImpl implements NoteService {
 
 	@Override
 	public void favouriteNotes(Integer noteId) throws Exception {
-		Integer userId = 1;
+		Integer userId = CommonUtil.getLoggedInUser().getId();
 		Notes note = noteRepository.findById(noteId).orElseThrow(()-> new ResourceNotFoundException("Notes not available..."));
 		FavouriteNotes favouriteNote = FavouriteNotes.builder().note(note).userId(userId).build();
 		favouriteNoteRepository.save(favouriteNote);
@@ -276,7 +280,7 @@ public class NoteServiceImpl implements NoteService {
 
 	@Override
 	public List<FavouriteNotesDto> getUserFavouriteNotes() {
-		int userId = 1;
+		int userId = CommonUtil.getLoggedInUser().getId();
 		List<FavouriteNotes> notes = favouriteNoteRepository.findByUserId(userId);
 		List<FavouriteNotesDto> favouriteNotes = notes.stream().map(note -> mapper.map(note, FavouriteNotesDto.class)).toList();
 		return favouriteNotes;

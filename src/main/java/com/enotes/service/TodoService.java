@@ -10,5 +10,5 @@ public interface TodoService {
 	
 	TodoDto getTodoById(Integer id) throws Exception;
 	
-	List<TodoDto> getAllTodo() throws Exception;
+	List<TodoDto> getAllTodoByUser() throws Exception;
 }

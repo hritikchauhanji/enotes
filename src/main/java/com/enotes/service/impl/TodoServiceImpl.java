@@ -2,6 +2,7 @@ package com.enotes.service.impl;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import com.enotes.enums.TodoStatus;
 import com.enotes.exceptionhandling.ResourceNotFoundException;
 import com.enotes.repository.TodoRepository;
 import com.enotes.service.TodoService;
+import com.enotes.util.CommonUtil;
 import com.enotes.util.Validation;
 
 @Service
@@ -67,8 +69,9 @@ public class TodoServiceImpl implements TodoService {
 	}
 
 	@Override
-	public List<TodoDto> getAllTodo() throws Exception {
-		List<Todo> allTodo = todoRepository.findAll();
+	public List<TodoDto> getAllTodoByUser() throws Exception {
+		Integer userId = CommonUtil.getLoggedInUser().getId();
+		List<Todo> allTodo = todoRepository.findByCreatedBy(userId);
 		List<TodoDto> list = allTodo.stream().map(todo -> mapper.map(todo, TodoDto.class)).toList();
 		if(!CollectionUtils.isEmpty(list)) {
 			return list;

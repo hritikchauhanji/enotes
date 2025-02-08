@@ -48,8 +48,8 @@ public class TodoController {
 	
 	@GetMapping("/getAll")
 	@PreAuthorize("hasRole('USER')")
-	ResponseEntity<?> getAllTodo() throws Exception{
-		List<TodoDto> todoById = todoService.getAllTodo();
+	ResponseEntity<?> getAllTodoByUser() throws Exception{
+		List<TodoDto> todoById = todoService.getAllTodoByUser();
 		if(!CollectionUtils.isEmpty(todoById)) {
 			return CommonUtil.createBuildResponse(todoById, HttpStatus.OK);
 		}
