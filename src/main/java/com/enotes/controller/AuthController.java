@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.enotes.dto.LoginRequest;
 import com.enotes.dto.LoginResponse;
 import com.enotes.dto.UserRequest;
-import com.enotes.service.UserService;
+import com.enotes.service.AuthService;
 import com.enotes.util.CommonUtil;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,12 +22,12 @@ import jakarta.servlet.http.HttpServletRequest;
 public class AuthController {
 	
 	@Autowired
-	private UserService userService;
+	private AuthService authService;
 
 	@PostMapping
 	ResponseEntity<?> register(@RequestBody UserRequest userRequest, HttpServletRequest request) throws Exception{
 		String url = CommonUtil.getUrl(request);
-		Boolean registerUser = userService.registerUser(userRequest,url);
+		Boolean registerUser = authService.registerUser(userRequest,url);
 		if(registerUser) {
 			return CommonUtil.createBuildResponseMessage("Registration Successful...", HttpStatus.CREATED);
 		}
@@ -36,7 +36,7 @@ public class AuthController {
 	
 	@PostMapping("/login")
 	ResponseEntity<?> login(@RequestBody LoginRequest request) throws Exception{
-		LoginResponse response = userService.login(request);
+		LoginResponse response = authService.login(request);
 		
 		if(ObjectUtils.isEmpty(response)) {
 			return CommonUtil.createErrorResponseMessage("Invalid Credential", HttpStatus.BAD_REQUEST);
