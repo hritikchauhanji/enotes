@@ -22,6 +22,8 @@ public interface NoteService {
 	FileDetails getFileDetails(Integer id) throws Exception;
 
 	NoteResponse getAllNotesByUser(Integer pageNo, Integer pageSize);
+	
+	NoteResponse getUserNotesBySearch(Integer pageNo, Integer pageSize, String keyword);
 
 	void softDeleteNotes(Integer id) throws Exception;
 
