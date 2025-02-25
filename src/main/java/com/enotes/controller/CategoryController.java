@@ -21,6 +21,8 @@ import com.enotes.dto.CategoryResponse;
 import com.enotes.service.Services;
 import com.enotes.util.CommonUtil;
 
+import lombok.extern.slf4j.Slf4j;
+
 @RestController
 @RequestMapping("/api/v1/category")
 public class CategoryController {
