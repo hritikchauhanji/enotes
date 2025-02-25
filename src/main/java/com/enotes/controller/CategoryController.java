@@ -18,21 +18,20 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.enotes.dto.CategoryDto;
 import com.enotes.dto.CategoryResponse;
+import com.enotes.endpoint.CategoryControllerEndpoint;
 import com.enotes.service.Services;
 import com.enotes.util.CommonUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
-@RequestMapping("/api/v1/category")
-public class CategoryController {
+public class CategoryController implements CategoryControllerEndpoint {
 
 	@Autowired
 	private Services services;
 
-	@PostMapping("/save")
-	@PreAuthorize("hasRole('ADMIN')")
-	ResponseEntity<?> saveCategory(@RequestBody CategoryDto categoryDto) {
+	@Override
+	public ResponseEntity<?> saveCategory(@RequestBody CategoryDto categoryDto) {
 		Boolean saveCategory = services.saveCategory(categoryDto);
 		if (saveCategory) {
 			return CommonUtil.createBuildResponseMessage("Category saved", HttpStatus.CREATED);
@@ -43,9 +42,8 @@ public class CategoryController {
 		}
 	}
 
-	@GetMapping("/")
-	@PreAuthorize("hasRole('ADMIN')")
-	ResponseEntity<?> getAllCategory() {
+	@Override
+	public ResponseEntity<?> getAllCategory() {
 		List<CategoryDto> getAll = services.getAllCategory();
 		if (CollectionUtils.isEmpty(getAll)) {
 			return ResponseEntity.noContent().build();
@@ -55,9 +53,8 @@ public class CategoryController {
 		}
 	}
 
-	@GetMapping("/active")
-	@PreAuthorize("hasAnyRole('USER','ADMIN')")
-	ResponseEntity<?> getActiveCategory() {
+	@Override
+	public ResponseEntity<?> getActiveCategory() {
 		List<CategoryResponse> getAll = services.getAllActiveCategory();
 		if (CollectionUtils.isEmpty(getAll)) {
 			return ResponseEntity.noContent().build();
@@ -67,9 +64,8 @@ public class CategoryController {
 		}
 	}
 
-	@GetMapping("/{id}")
-	@PreAuthorize("hasRole('ADMIN')")
-	ResponseEntity<?> getCategoryById(@PathVariable Integer id) throws Exception {
+	@Override
+	public ResponseEntity<?> getCategoryById(@PathVariable Integer id) throws Exception {
 		CategoryDto categoryDto = services.getCategoryById(id);
 		if (ObjectUtils.isEmpty(categoryDto)) {
 //			return new ResponseEntity<>("Interval Server Error", HttpStatus.NOT_FOUND);
@@ -93,9 +89,8 @@ public class CategoryController {
 
 	}
 
-	@DeleteMapping("/{id}")
-	@PreAuthorize("hasRole('ADMIN')")
-	ResponseEntity<?> deleteCategoryById(@PathVariable Integer id) {
+	@Override
+	public ResponseEntity<?> deleteCategoryById(@PathVariable Integer id) {
 		Boolean deleted = services.DeleteCategoryById(id);
 		if (deleted) {
 //			return new ResponseEntity<>("Category delete successfully", HttpStatus.OK);
