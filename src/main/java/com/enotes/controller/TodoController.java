@@ -16,19 +16,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.enotes.dto.TodoDto;
+import com.enotes.endpoint.TodoControllerEndpoint;
 import com.enotes.service.TodoService;
 import com.enotes.util.CommonUtil;
 
 @RestController
-@RequestMapping("/api/v1/todo")
-public class TodoController {
+public class TodoController implements TodoControllerEndpoint {
 
 	@Autowired
 	private TodoService todoService;
 	
-	@PostMapping
-	@PreAuthorize("hasRole('USER')")
-	ResponseEntity<?> saveTodo(@RequestBody TodoDto todo) throws Exception{
+	@Override
+	public ResponseEntity<?> saveTodo(@RequestBody TodoDto todo) throws Exception{
 		Boolean saveTodo = todoService.saveTodo(todo);
 		if(!ObjectUtils.isEmpty(saveTodo)) {
 			return CommonUtil.createBuildResponseMessage("Todo Saved", HttpStatus.CREATED); 	
@@ -36,9 +35,8 @@ public class TodoController {
 		return CommonUtil.createErrorResponseMessage("Todo Not Save", HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
-	@GetMapping("/get/{id}")
-	@PreAuthorize("hasRole('USER')")
-	ResponseEntity<?> getTodoByuser(@PathVariable Integer id) throws Exception{
+	@Override
+	public ResponseEntity<?> getTodoByuser(@PathVariable Integer id) throws Exception{
 		TodoDto todoById = todoService.getTodoById(id);
 		if(!ObjectUtils.isEmpty(todoById)) {
 			return CommonUtil.createBuildResponse(todoById, HttpStatus.OK);
@@ -46,9 +44,8 @@ public class TodoController {
 		return CommonUtil.createErrorResponseMessage("Todo is not found", HttpStatus.NOT_FOUND);
 	}
 	
-	@GetMapping("/getAll")
-	@PreAuthorize("hasRole('USER')")
-	ResponseEntity<?> getAllTodoByUser() throws Exception{
+	@Override
+	public ResponseEntity<?> getAllTodoByUser() throws Exception{
 		List<TodoDto> todoById = todoService.getAllTodoByUser();
 		if(!CollectionUtils.isEmpty(todoById)) {
 			return CommonUtil.createBuildResponse(todoById, HttpStatus.OK);
