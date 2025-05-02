@@ -1,5 +1,7 @@
 package com.enotes.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,14 +30,14 @@ public class AuthController implements AuthControllerEndpoint {
 
 	@Override
 	public ResponseEntity<?> register(@RequestBody UserRequest userRequest, HttpServletRequest request) throws Exception{
-		log.info("AuthController : register() : Exceution Start");
+		log.info("AuthController : register() : Execution Start");
 		String url = CommonUtil.getUrl(request);
 		Boolean registerUser = authService.registerUser(userRequest,url);
 		if(!registerUser) {
 			log.info("Error: {}", "Register failed");
 			return CommonUtil.createErrorResponseMessage("Regitration Failed", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		log.info("AuthController : register() : Exceution Start");
+		log.info("AuthController : register() : Execution Start");
 		return CommonUtil.createBuildResponseMessage("Registration Successful...", HttpStatus.CREATED);
 		
 	}

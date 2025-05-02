@@ -72,7 +72,7 @@ public class AuthServiceImpl implements AuthService {
 		userRepository.save(user);
 		if(!ObjectUtils.isEmpty(user)) {
 			//send Email
-			emailSendForRegister(user, url);
+//			emailSendForRegister(user, url);
 			
 			return true;
 		}

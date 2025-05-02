@@ -13,13 +13,13 @@ spring:
     url: jdbc:mysql://localhost:3306/enotes_dev
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
-    password: Hritik@2002
+    password: Root@2010
   jpa:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
   servlet:
     multipart:
       max-file-size: 1000MB
