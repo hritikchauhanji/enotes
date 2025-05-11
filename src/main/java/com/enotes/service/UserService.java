@@ -3,7 +3,7 @@ package com.enotes.service;
 import com.enotes.dto.PasswordChangeRequest;
 import com.enotes.dto.PswdResetRequest;
 
-import jakarta.servlet.http.HttpServletRequest;
+
 
 public interface UserService{
  

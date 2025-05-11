@@ -11,7 +11,6 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
 import com.enotes.dto.FavouriteNotesDto;
 import com.enotes.dto.NoteDto;
 import com.enotes.dto.NoteResponse;
