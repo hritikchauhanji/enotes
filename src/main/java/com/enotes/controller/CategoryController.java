@@ -5,15 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.enotes.dto.CategoryDto;
@@ -22,7 +15,6 @@ import com.enotes.endpoint.CategoryControllerEndpoint;
 import com.enotes.service.Services;
 import com.enotes.util.CommonUtil;
 
-import lombok.extern.slf4j.Slf4j;
 
 @RestController
 public class CategoryController implements CategoryControllerEndpoint {
@@ -31,7 +23,7 @@ public class CategoryController implements CategoryControllerEndpoint {
 	private Services services;
 
 	@Override
-	public ResponseEntity<?> saveCategory(@RequestBody CategoryDto categoryDto) {
+	public ResponseEntity<?> saveCategory(CategoryDto categoryDto) {
 		Boolean saveCategory = services.saveCategory(categoryDto);
 		if (saveCategory) {
 			return CommonUtil.createBuildResponseMessage("Category saved", HttpStatus.CREATED);
@@ -65,7 +57,7 @@ public class CategoryController implements CategoryControllerEndpoint {
 	}
 
 	@Override
-	public ResponseEntity<?> getCategoryById(@PathVariable Integer id) throws Exception {
+	public ResponseEntity<?> getCategoryById(Integer id) throws Exception {
 		CategoryDto categoryDto = services.getCategoryById(id);
 		if (ObjectUtils.isEmpty(categoryDto)) {
 //			return new ResponseEntity<>("Interval Server Error", HttpStatus.NOT_FOUND);
@@ -90,7 +82,7 @@ public class CategoryController implements CategoryControllerEndpoint {
 	}
 
 	@Override
-	public ResponseEntity<?> deleteCategoryById(@PathVariable Integer id) {
+	public ResponseEntity<?> deleteCategoryById(Integer id) {
 		Boolean deleted = services.DeleteCategoryById(id);
 		if (deleted) {
 //			return new ResponseEntity<>("Category delete successfully", HttpStatus.OK);
