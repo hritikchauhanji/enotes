@@ -1,13 +1,5 @@
 package com.enotes.controller;
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
-=======
-
->>>>>>> Stashed changes
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,16 +24,8 @@ public class AuthController implements AuthControllerEndpoint {
 	private AuthService authService;
 
 	@Override
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-	public ResponseEntity<?> register(@RequestBody UserRequest userRequest, HttpServletRequest request) throws Exception{
-		log.info("AuthController : register() : Exceution Start");
-=======
-=======
->>>>>>> Stashed changes
 	public ResponseEntity<?> register(UserRequest userRequest, HttpServletRequest request) throws Exception{
 		log.info("AuthController : register() : Execution Start");
->>>>>>> Stashed changes
 		String url = CommonUtil.getUrl(request);
 		Boolean registerUser = authService.registerUser(userRequest,url);
 		if(!registerUser) {
