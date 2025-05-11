@@ -1,14 +1,10 @@
 package com.enotes.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.ObjectUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.enotes.dto.LoginRequest;
@@ -29,7 +25,7 @@ public class AuthController implements AuthControllerEndpoint {
 	private AuthService authService;
 
 	@Override
-	public ResponseEntity<?> register(@RequestBody UserRequest userRequest, HttpServletRequest request) throws Exception{
+	public ResponseEntity<?> register(UserRequest userRequest, HttpServletRequest request) throws Exception{
 		log.info("AuthController : register() : Execution Start");
 		String url = CommonUtil.getUrl(request);
 		Boolean registerUser = authService.registerUser(userRequest,url);
@@ -43,7 +39,7 @@ public class AuthController implements AuthControllerEndpoint {
 	}
 	
 	@Override
-	public ResponseEntity<?> login(@RequestBody LoginRequest request) throws Exception{
+	public ResponseEntity<?> login(LoginRequest request) throws Exception{
 		LoginResponse response = authService.login(request);
 		
 		if(ObjectUtils.isEmpty(response)) {
