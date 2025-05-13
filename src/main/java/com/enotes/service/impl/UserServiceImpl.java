@@ -17,8 +17,6 @@ import com.enotes.repository.UserRepository;
 import com.enotes.service.UserService;
 import com.enotes.util.CommonUtil;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 @Service
 public class UserServiceImpl implements UserService {
 	

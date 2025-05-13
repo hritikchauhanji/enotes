@@ -1,7 +1,5 @@
 package com.enotes.service;
 
-import org.springframework.web.multipart.MultipartFile;
-
 import com.enotes.dto.LoginRequest;
 import com.enotes.dto.LoginResponse;
 import com.enotes.dto.UserRequest;

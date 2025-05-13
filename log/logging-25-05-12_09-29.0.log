@@ -1,0 +1,8 @@
+2025-05-12 09:29:55.107 INFO  [RMI TCP Connection(33)-127.0.0.1] o.s.b.a.SpringApplicationAdminMXBeanRegistrar$SpringApplicationAdmin - Application shutdown requested.
+2025-05-12 09:29:55.373 INFO  [RMI TCP Connection(33)-127.0.0.1] o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-05-12 09:29:55.415 INFO  [RMI TCP Connection(33)-127.0.0.1] com.zaxxer.hikari.HikariDataSource - HikariPool-6 - Shutdown initiated...
+2025-05-12 09:29:55.537 INFO  [RMI TCP Connection(33)-127.0.0.1] com.zaxxer.hikari.HikariDataSource - HikariPool-6 - Shutdown completed.
+2025-05-12 09:29:59.162 INFO  [restartedMain] com.enotes.ENotesApplication - Starting ENotesApplication using Java 17.0.14 with PID 3312 (C:\Users\ASUS\Documents\workspace-sts\enotes\target\classes started by ASUS in C:\Users\ASUS\Documents\workspace-sts\enotes)
+2025-05-12 09:29:59.170 INFO  [restartedMain] com.enotes.ENotesApplication - The following 1 profile is active: "dev"
+2025-05-12 09:29:59.236 INFO  [restartedMain] o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-05-12 09:29:59.237 INFO  [restartedMain] o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'

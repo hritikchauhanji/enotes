@@ -8,12 +8,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.enotes.dto.PasswordChangeRequest;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+@Tag(name = "User", description = "Authentication User Operation APIs")
 @RequestMapping("api/v1/user")
 public interface UserControllerEndpoint {
 	
+	@Operation(summary = "Get User Profile", tags = { "Notes" }, description = "Get User Profile")
 	@GetMapping("/profile")
 	public ResponseEntity<?> getProfile();
 	
+	@Operation(summary = "User Account Password Change", tags = {
+	"Notes" }, description = "User Account Password Change")
 	@PostMapping("/pass-chng")
 	public ResponseEntity<?> passwordChange(@RequestBody PasswordChangeRequest passwordChangeRequest);
 }

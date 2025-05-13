@@ -32,9 +32,10 @@ public class HomeController implements HomeControllerEndpoint{
 		Boolean verifyAccount = homeService.verifyAccount(id, code);
 		
 		if(verifyAccount) {
+			log.info("HomeController : verifyUserAccount() : Exceution End");
 			return CommonUtil.createBuildResponseMessage("Verification Successful", HttpStatus.OK);
 		}
-		log.info("HomeController : verifyUserAccount() : Exceution End");
+		
 		return CommonUtil.createErrorResponseMessage("Invalid Verification Link", HttpStatus.BAD_REQUEST);
 	}
 	

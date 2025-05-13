@@ -1,0 +1,4 @@
+2025-05-12 09:40:21.149 INFO  [http-nio-8080-exec-5] c.enotes.controller.AuthController - AuthController : register() : Execution Start
+2025-05-12 09:40:21.179 INFO  [http-nio-8080-exec-5] c.e.service.impl.AuthServiceImpl - AuthServiceImpl : RegisterUser() : Execution Start
+2025-05-12 09:40:27.231 INFO  [http-nio-8080-exec-5] c.e.service.impl.AuthServiceImpl - AuthServiceImpl : RegisterUser() : Execution End
+2025-05-12 09:40:27.231 INFO  [http-nio-8080-exec-5] c.enotes.controller.AuthController - AuthController : register() : Execution End

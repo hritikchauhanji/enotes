@@ -1,14 +1,14 @@
 package com.enotes.service.impl;
 
-import com.enotes.service.HomeService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.enotes.entity.AccountStatus;
 import com.enotes.entity.User;
-import com.enotes.exceptionhandling.ExistDataException;
 import com.enotes.exceptionhandling.ResourceNotFoundException;
 import com.enotes.exceptionhandling.SuccessException;
 import com.enotes.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import com.enotes.service.HomeService;
 
 @Service
 public class HomeServiceImpl implements HomeService {

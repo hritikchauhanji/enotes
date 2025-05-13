@@ -23,10 +23,13 @@ import com.enotes.entity.Role;
 import com.enotes.entity.User;
 import com.enotes.repository.RoleRepository;
 import com.enotes.repository.UserRepository;
-import com.enotes.service.JwtService;
 import com.enotes.service.AuthService;
+import com.enotes.service.JwtService;
 import com.enotes.util.Validation;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 public class AuthServiceImpl implements AuthService {
 	
@@ -58,6 +61,7 @@ public class AuthServiceImpl implements AuthService {
 
 	@Override
 	public Boolean registerUser(UserRequest userRequest,String url) throws Exception {
+		log.info("AuthServiceImpl : RegisterUser() : Execution Start");
 		// validation
 		validation.userRegisterValidation(userRequest);
 		
@@ -70,13 +74,15 @@ public class AuthServiceImpl implements AuthService {
 		user.setStatus(status);
 		user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
 		userRepository.save(user);
-		if(!ObjectUtils.isEmpty(user)) {
-			//send Email
-//			emailSendForRegister(user, url);
+		if(ObjectUtils.isEmpty(user)) {
 			
-			return true;
+			return false;
+			
 		}
-		return false;
+		//send Email
+		emailSendForRegister(user, url);
+		log.info("AuthServiceImpl : RegisterUser() : Execution End");
+		return true;
 	}
 
 	private void emailSendForRegister(User user,String url) throws Exception {

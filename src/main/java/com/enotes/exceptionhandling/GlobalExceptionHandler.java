@@ -4,14 +4,13 @@ import java.io.FileNotFoundException;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.MailAuthenticationException;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import com.enotes.util.CommonUtil;
 
-import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @ControllerAdvice
@@ -19,7 +18,14 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<?> handleException(Exception e) {
-		log.error("GlobalExceptionHandler :: handleException :: " , e.getMessage());
+		log.error("GlobalExceptionHandler :: handleException :: {}" , e.getMessage());
+//		return new ResponseEntity<>(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
+		return CommonUtil.createErrorResponseMessage(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+	
+	@ExceptionHandler(MailAuthenticationException.class)
+	public ResponseEntity<?> handleMailAuthenticationException(MailAuthenticationException e) {
+		log.error("GlobalExceptionHandler : MailAuthenticationException() : {}" , e.getMessage());
 //		return new ResponseEntity<>(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
 		return CommonUtil.createErrorResponseMessage(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 	}

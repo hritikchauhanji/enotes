@@ -2,8 +2,6 @@ package com.enotes.dto;
 
 import java.util.List;
 
-import com.enotes.entity.Role;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
