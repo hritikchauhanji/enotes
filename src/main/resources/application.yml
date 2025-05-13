@@ -3,6 +3,7 @@ spring:
     name: enotes
   profiles:
     active: dev
+
 ---
 # dev Config
 spring:
@@ -26,17 +27,31 @@ spring:
       max-request-size: 1000MB 
   mail:
     host: smtp.gmail.com
+    port: 587
     username: hritikchji@gmail.com
     password: ${SPRING_MAIL_PASSWORD}
-    port: 587
     properties:
       mail:
         smtp:
           auth: true
           starttls:
             enable: true
+            required: true
+    default-encoding: UTF-8
+springdoc:
+  swagger-ui:
+    operationsSorter: method
+    tagsSorter: alpha
+    path: /enotes-doc
+  api-docs:
+    path: /enotes-api-doc
 
-
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+        exclude: beans,loggers
 file:
   upload:
     path: notes/
@@ -72,7 +87,13 @@ spring:
           auth: true
           starttls:
             enable: true
-
+springdoc:
+  swagger-ui:
+    operationsSorter: method
+    tagsSorter: alpha
+    path: /enotes-doc
+  api-docs:
+    path: /enotes-api-doc
 
 file:
   upload:
@@ -109,8 +130,16 @@ spring:
           auth: true
           starttls:
             enable: true
+springdoc:
+  swagger-ui:
+    operationsSorter: method
+    tagsSorter: alpha
+    path: /enotes-doc
+  api-docs:
+    path: /enotes-api-doc
 
-
+server:
+  port: 8082
 file:
   upload:
     path: notes/
@@ -146,7 +175,13 @@ spring:
           auth: true
           starttls:
             enable: true
-
+springdoc:
+  swagger-ui:
+    operationsSorter: method
+    tagsSorter: alpha
+    path: /enotes-doc
+  api-docs:
+    path: /enotes-api-doc
 file:
   upload:
     path: notes/

@@ -1,20 +1,18 @@
 package com.enotes.service.impl;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.ObjectUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import com.enotes.dto.CategoryDto;
 import com.enotes.dto.CategoryResponse;
 import com.enotes.entity.Category;
 import com.enotes.exceptionhandling.ExistDataException;
 import com.enotes.exceptionhandling.ResourceNotFoundException;
-import com.enotes.exceptionhandling.ValidationException;
 import com.enotes.repository.CategoryRepository;
 import com.enotes.service.Services;
 import com.enotes.util.Validation;

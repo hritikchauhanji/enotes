@@ -33,7 +33,7 @@ public class AuthController implements AuthControllerEndpoint {
 			log.info("Error: {}", "Register failed");
 			return CommonUtil.createErrorResponseMessage("Regitration Failed", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		log.info("AuthController : register() : Execution Start");
+		log.info("AuthController : register() : Execution End");
 		return CommonUtil.createBuildResponseMessage("Registration Successful...", HttpStatus.CREATED);
 		
 	}
