@@ -1,16 +1,14 @@
 package com.enotes.entity;
 
+import jakarta.persistence.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -18,7 +16,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-public class Category extends BaseModel{
+public class Course extends BaseModel{
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,9 +24,10 @@ public class Category extends BaseModel{
 	
 	private String name;
 	
-	private String description;
-	
 	private Boolean isActive;
 
 	private Boolean isDeleted;
+
+	@OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
+	private List<Semester> semesters;
 }

@@ -66,7 +66,7 @@ public class AuthServiceImpl implements AuthService {
 		validation.userRegisterValidation(userRequest);
 		
 		User user = mapper.map(userRequest, User.class);
-		setRole(userRequest, user);
+		setRole(user);
 		AccountStatus status =  AccountStatus.builder()
 				.isActive(false)
 				.verificationCode(UUID.randomUUID().toString())
@@ -104,10 +104,12 @@ public class AuthServiceImpl implements AuthService {
 		emailService.sendEmail(emailRequest);
 	}
 
-	private void setRole(UserRequest userRequest, User user) {
-		List<Integer> reqRoleId = userRequest.getRoles().stream().map(r->r.getId()).toList();
-		List<Role> roles = roleRepository.findAllById(reqRoleId);
-		user.setRoles(roles);
+	private void setRole(User user){
+		Role userRole = roleRepository.findByName("USER")
+				.orElseThrow(() -> new RuntimeException("Default role ROLE_USER not found"));
+
+		user.setRoles(List.of(userRole));
+
 	}
 	
 	

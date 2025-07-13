@@ -34,7 +34,7 @@ public class Notes extends BaseModel{
 	private String description;
 	
 	@ManyToOne
-	private Category category;
+	private Course course;
 	
 	@ManyToOne
 	private FileDetails fileDetails;

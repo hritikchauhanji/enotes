@@ -33,7 +33,7 @@ import com.enotes.entity.FavouriteNotes;
 import com.enotes.entity.FileDetails;
 import com.enotes.entity.Notes;
 import com.enotes.exceptionhandling.ResourceNotFoundException;
-import com.enotes.repository.CategoryRepository;
+import com.enotes.repository.CourseRepository;
 import com.enotes.repository.FavouriteNoteRepository;
 import com.enotes.repository.FileRepository;
 import com.enotes.repository.NoteRepository;
@@ -51,7 +51,7 @@ public class NoteServiceImpl implements NoteService {
 	private ModelMapper mapper;
 
 	@Autowired
-	private CategoryRepository categoryRepository;
+	private CourseRepository courseRepository;
 
 	@Value("${file.upload.path}")
 	private String uploadpath;
@@ -158,7 +158,7 @@ public class NoteServiceImpl implements NoteService {
 	}
 
 	private void checkCategoryExist(CategoryDto category) throws Exception {
-		categoryRepository.findById(category.getId())
+		courseRepository.findById(category.getId())
 				.orElseThrow(() -> new ResourceNotFoundException("Category Id Invalid"));
 	}
 
@@ -287,7 +287,7 @@ public class NoteServiceImpl implements NoteService {
 	public Boolean copyNotes(Integer id) throws Exception {
 		Notes notes = noteRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Invalid id..."));
 		
-		Notes copyNotes = Notes.builder().title(notes.getTitle()).description(notes.getDescription()).category(notes.getCategory()).isDeleted(false).fileDetails(null).build();
+		Notes copyNotes = Notes.builder().title(notes.getTitle()).description(notes.getDescription()).course(notes.getCourse()).isDeleted(false).fileDetails(null).build();
 		Notes save = noteRepository.save(copyNotes);
 		if(!ObjectUtils.isEmpty(save)) {
 			return true;

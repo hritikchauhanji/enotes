@@ -13,7 +13,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class UserRequest {
 	
-	private Integer Id;
+	private Integer id;
 
 	private String firstName;
 
@@ -24,17 +24,9 @@ public class UserRequest {
 	private String password;
 
 	private String mobNo;
+
+	private Integer courseId;
+
+	private Integer semesterId;
 	
-	private List<RoleDto> roles;
-	
-	@Getter
-	@Setter
-	@AllArgsConstructor
-	@NoArgsConstructor
-	public static class RoleDto{
-		
-		private Integer id;
-		
-		private String name;
-	}
 }

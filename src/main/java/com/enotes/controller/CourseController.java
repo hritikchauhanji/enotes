@@ -9,22 +9,22 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.enotes.dto.CategoryDto;
-import com.enotes.dto.CategoryResponse;
-import com.enotes.endpoint.CategoryControllerEndpoint;
-import com.enotes.service.Services;
+import com.enotes.dto.CourseRequest;
+import com.enotes.dto.CourseResponse;
+import com.enotes.endpoint.CourseControllerEndpoint;
+import com.enotes.service.CourseService;
 import com.enotes.util.CommonUtil;
 
 
 @RestController
-public class CategoryController implements CategoryControllerEndpoint {
+public class CourseController implements CourseControllerEndpoint {
 
 	@Autowired
-	private Services services;
+	private CourseService courseService;
 
 	@Override
-	public ResponseEntity<?> saveCategory(CategoryDto categoryDto) {
-		Boolean saveCategory = services.saveCategory(categoryDto);
+	public ResponseEntity<?> saveCourse(CourseRequest courseRequest) {
+		Boolean saveCategory = courseService.saveCourse(courseRequest);
 		if (saveCategory) {
 			return CommonUtil.createBuildResponseMessage("Category saved", HttpStatus.CREATED);
 //			return new ResponseEntity<>("saved", HttpStatus.CREATED);
@@ -35,8 +35,8 @@ public class CategoryController implements CategoryControllerEndpoint {
 	}
 
 	@Override
-	public ResponseEntity<?> getAllCategory() {
-		List<CategoryDto> getAll = services.getAllCategory();
+	public ResponseEntity<?> getAllCourses() {
+		List<CourseResponse> getAll = courseService.getAllCourse();
 		if (CollectionUtils.isEmpty(getAll)) {
 			return ResponseEntity.noContent().build();
 		} else {
@@ -46,8 +46,8 @@ public class CategoryController implements CategoryControllerEndpoint {
 	}
 
 	@Override
-	public ResponseEntity<?> getActiveCategory() {
-		List<CategoryResponse> getAll = services.getAllActiveCategory();
+	public ResponseEntity<?> getActiveCourses() {
+		List<CourseResponse> getAll = courseService.getAllActiveCourse();
 		if (CollectionUtils.isEmpty(getAll)) {
 			return ResponseEntity.noContent().build();
 		} else {
@@ -57,14 +57,14 @@ public class CategoryController implements CategoryControllerEndpoint {
 	}
 
 	@Override
-	public ResponseEntity<?> getCategoryById(Integer id) throws Exception {
-		CategoryDto categoryDto = services.getCategoryById(id);
-		if (ObjectUtils.isEmpty(categoryDto)) {
+	public ResponseEntity<?> getCourseById(Integer id) throws Exception {
+		CourseResponse courseRequest = courseService.getCourseById(id);
+		if (ObjectUtils.isEmpty(courseRequest)) {
 //			return new ResponseEntity<>("Interval Server Error", HttpStatus.NOT_FOUND);
 			return CommonUtil.createErrorResponseMessage("Internal server error", HttpStatus.NOT_FOUND);
 		} else {
 //			return new ResponseEntity<>(categoryDto, HttpStatus.OK);
-			return CommonUtil.createBuildResponse(categoryDto, HttpStatus.OK);
+			return CommonUtil.createBuildResponse(courseRequest, HttpStatus.OK);
 		}
 //		try {
 //			CategoryDto categoryDto = services.getCategoryById(id);
@@ -82,8 +82,8 @@ public class CategoryController implements CategoryControllerEndpoint {
 	}
 
 	@Override
-	public ResponseEntity<?> deleteCategoryById(Integer id) {
-		Boolean deleted = services.DeleteCategoryById(id);
+	public ResponseEntity<?> deleteCourseById(Integer id) {
+		Boolean deleted = courseService.DeleteCourseById(id);
 		if (deleted) {
 //			return new ResponseEntity<>("Category delete successfully", HttpStatus.OK);
 			return CommonUtil.createBuildResponseMessage("Category deleted successfully", HttpStatus.OK);

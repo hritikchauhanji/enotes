@@ -57,6 +57,10 @@ management:
 file:
   upload:
     path: notes/
+admin:
+  email: hritikchji@gmail.com
+  password: ${EMAIL_PASSWORD}
+
 ---
 # test Config
 spring:

@@ -11,21 +11,21 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
-import com.enotes.dto.CategoryDto;
-import com.enotes.dto.CategoryResponse;
-import com.enotes.entity.Category;
+import com.enotes.dto.CourseRequest;
+import com.enotes.dto.CourseResponse;
+import com.enotes.entity.Course;
 import com.enotes.exceptionhandling.ExistDataException;
 import com.enotes.exceptionhandling.ResourceNotFoundException;
-import com.enotes.repository.CategoryRepository;
+import com.enotes.repository.CourseRepository;
 import com.enotes.service.CacheManagerService;
-import com.enotes.service.Services;
+import com.enotes.service.CourseService;
 import com.enotes.util.Validation;
 
 @Service
-public class ServiceImpl implements Services {
+public class CourseServiceImpl implements CourseService {
 	
 	@Autowired
-	private CategoryRepository categoryRepository;
+	private CourseRepository courseRepository;
 	
 	@Autowired
 	private ModelMapper mapper;
@@ -37,7 +37,7 @@ public class ServiceImpl implements Services {
 	private CacheManagerService cacheService;
 
 	@Override
-	public Boolean saveCategory(CategoryDto categoryDto) {
+	public Boolean saveCourse(CourseRequest courseRequest) {
 //		Category category = new Category();
 //		category.setName(categoryDto.getName());
 //		category.setDescription(categoryDto.getDescription());
@@ -46,39 +46,39 @@ public class ServiceImpl implements Services {
 //		category.setUpdatedBy(categoryDto.getUpdatedBy()); 
 		
 		//validation checking :-
-		validation.categoryValidation(categoryDto);
+		validation.courseValidation(courseRequest);
 		
 		// check category exist or not :-
-		Boolean existsByName = categoryRepository.existsByName(categoryDto.getName().trim());
+		Boolean existsByName = courseRepository.existsByName(courseRequest.getName().trim());
 		
 		if(existsByName) {
 			throw new ExistDataException("Category is already exists...");
 		}
 		
-		Category category = mapper.map(categoryDto, Category.class);
-		if(ObjectUtils.isEmpty(category.getId())) {
-			category.setIsDeleted(false);
+		Course course = mapper.map(courseRequest, Course.class);
+		if(ObjectUtils.isEmpty(course.getId())) {
+			course.setIsDeleted(false);
 //			category.setCreatedBy(1);
 //		category.setCreatedOn(new Date());
 //		category.setUpdatedOn(new Date());
 		} else {
-			updateCategory(category);
+			updateCourse(course);
 		}
 		
-		Category save = categoryRepository.save(category);
+		Course save = courseRepository.save(course);
 		if(ObjectUtils.isEmpty(save)) {
 			return false;
 		}
 		return true;
 	}
 
-	private void updateCategory(Category category) {
-		Optional<Category> findById = categoryRepository.findById(category.getId());
+	private void updateCourse(Course course) {
+		Optional<Course> findById = courseRepository.findById(course.getId());
 		if(findById.isPresent()) {
-			Category existCategory = findById.get();
-			category.setCreatedBy(existCategory.getCreatedBy());
-			category.setCreatedOn(existCategory.getCreatedOn());
-			category.setIsDeleted(existCategory.getIsDeleted());
+			Course existCourse = findById.get();
+			course.setCreatedBy(existCourse.getCreatedBy());
+			course.setCreatedOn(existCourse.getCreatedOn());
+			course.setIsDeleted(existCourse.getIsDeleted());
 //			category.setUpdatedBy(1);
 //			category.setUpdatedOn(new Date());
 		}
@@ -86,31 +86,31 @@ public class ServiceImpl implements Services {
 
 	@Override
 	@Cacheable("allCategory")
-	public List<CategoryDto> getAllCategory() {
-		List<Category> categories = categoryRepository.findByIsDeletedFalse();
-		List<CategoryDto> categoriesDto = categories.stream().map(cat -> mapper.map(cat, CategoryDto.class)).toList();
+	public List<CourseResponse> getAllCourse() {
+		List<Course> categories = courseRepository.findByIsDeletedFalse();
+		List<CourseResponse> categoriesDto = categories.stream().map(cat -> mapper.map(cat, CourseResponse.class)).toList();
 		return categoriesDto;
 	}
 
 	@Override
 	@Cacheable("activeCategory")
-	public List<CategoryResponse> getAllActiveCategory() {
-		List<Category> categories = categoryRepository.findAllByIsActiveTrue();
-		List<CategoryResponse> categoriesResponse = categories.stream().map(cat -> mapper.map(cat, CategoryResponse.class)).toList();
+	public List<CourseResponse> getAllActiveCourse() {
+		List<Course> categories = courseRepository.findAllByIsActiveTrue();
+		List<CourseResponse> categoriesResponse = categories.stream().map(cat -> mapper.map(cat, CourseResponse.class)).toList();
 		return categoriesResponse;
 	}
 
 	@Override
 	@Cacheable(value = "getCategoryById", key = "#id")
-	public CategoryDto getCategoryById(Integer id) throws Exception {
-		Category category = categoryRepository.findByIdAndIsDeletedFalse(id).orElseThrow(() -> new ResourceNotFoundException("Category not found by id = " + id));
-		if(!ObjectUtils.isEmpty(category)) {
+	public CourseResponse getCourseById(Integer id) throws Exception {
+		Course course = courseRepository.findByIdAndIsDeletedFalse(id).orElseThrow(() -> new ResourceNotFoundException("Category not found by id = " + id));
+		if(!ObjectUtils.isEmpty(course)) {
 //			if(category.getName() == null) {
 //				throw new IllegalArgumentException("name is null");
 //			}
 			
 //			category.getName().toUpperCase();
-				return mapper.map(category, CategoryDto.class);
+				return mapper.map(course, CourseResponse.class);
 		}
 
 		return null;
@@ -118,12 +118,12 @@ public class ServiceImpl implements Services {
 
 	@Override
 	@CacheEvict(value = "getCategoryById", key = "#id")
-	public Boolean DeleteCategoryById(Integer id) {
-		Optional<Category> findByCategory = categoryRepository.findById(id);
+	public Boolean DeleteCourseById(Integer id) {
+		Optional<Course> findByCategory = courseRepository.findById(id);
 		if(findByCategory.isPresent()) {
-			Category category = findByCategory.get();
-			category.setIsDeleted(true);
-			categoryRepository.save(category);
+			Course course = findByCategory.get();
+			course.setIsDeleted(true);
+			courseRepository.save(course);
 			
 			//remove from cache
 			cacheService.removeCacheById(Arrays.asList("allCategory","activeCategory"));
