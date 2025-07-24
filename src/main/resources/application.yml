@@ -2,11 +2,7 @@ spring:
   application:
     name: enotes
   profiles:
-    active: dev
-<<<<<<< HEAD
-=======
-
->>>>>>> dev
+    active: prod
 ---
 # dev Config
 spring:
