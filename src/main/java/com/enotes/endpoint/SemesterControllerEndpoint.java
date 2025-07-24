@@ -27,9 +27,9 @@ public interface SemesterControllerEndpoint {
     ResponseEntity<?> getAllSemesters();
 
     @Operation(summary = "Get All Active Semesters", tags = {"Semester"}, description = "Admin and User can view active semesters")
-    @GetMapping("/active")
-    @PreAuthorize(Role_Admin_User)
-    ResponseEntity<?> getActiveSemesters();
+    @GetMapping("/active/by-course/{courseId}")
+//    @PreAuthorize(Role_Admin_User)
+    ResponseEntity<?> getActiveSemestersByCourseId(@PathVariable Integer courseId);
 
     @Operation(summary = "Get Semester By ID", tags = {"Semester"}, description = "Admin can view semester details by ID")
     @GetMapping("/{id}")

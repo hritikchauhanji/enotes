@@ -48,6 +48,36 @@ public class NoteController implements NoteControllerEndpoint {
 	}
 
 	@Override
+	public ResponseEntity<?> getAllMyNotesBySubject(Integer subjectId) {
+		NoteResponse notes = noteService.getAllMyNotesBySubject(subjectId);
+		if (ObjectUtils.isEmpty(notes)) {
+			return CommonUtil.createErrorResponseMessage("Internal Server Error", HttpStatus.NOT_FOUND);
+		} else {
+			return CommonUtil.createBuildResponse(notes, HttpStatus.OK);
+		}
+	}
+
+	@Override
+	public ResponseEntity<?> getAllNotesBySubject(Integer subjectId) {
+		NoteResponse notes = noteService.getAllNotesBySubject(subjectId);
+		if (ObjectUtils.isEmpty(notes)) {
+			return CommonUtil.createErrorResponseMessage("Internal Server Error", HttpStatus.NOT_FOUND);
+		} else {
+			return CommonUtil.createBuildResponse(notes, HttpStatus.OK);
+		}
+	}
+
+	@Override
+	public ResponseEntity<?> getAllNotesAdminBySubject(Integer subjectId) {
+		NoteResponse notes = noteService.getAllNotesAdminBySubject(subjectId);
+		if (ObjectUtils.isEmpty(notes)) {
+			return CommonUtil.createErrorResponseMessage("Internal Server Error", HttpStatus.NOT_FOUND);
+		} else {
+			return CommonUtil.createBuildResponse(notes, HttpStatus.OK);
+		}
+	}
+
+	@Override
 	public ResponseEntity<?> getNoteById(Integer id) {
 		NoteDto noteById = noteService.getNoteById(id);
 		if (ObjectUtils.isEmpty(noteById)) {

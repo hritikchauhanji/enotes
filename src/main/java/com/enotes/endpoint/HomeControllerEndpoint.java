@@ -25,11 +25,8 @@ public interface HomeControllerEndpoint {
 	@GetMapping("/send-email-reset")
 	public ResponseEntity<?> sendEmailForPasswordReset(@RequestParam String email, HttpServletRequest request) throws Exception;
 	
-	@Operation(summary = "Verify Password Reset Link", tags = {"Home"}, description = "User verification password link")
-	@GetMapping("/verify-password-link")
-	public ResponseEntity<?> verifyPasswordResetLink(@RequestParam Integer uid,@RequestParam String code) throws Exception;
-	
 	@Operation(summary = "Reset Password", tags = {"Home"}, description = "User can changes password reset")
 	@PostMapping("/reset-pswd")
 	public ResponseEntity<?> resetPassword(@RequestBody PswdResetRequest pswdResetRequest) throws Exception;
+
 }

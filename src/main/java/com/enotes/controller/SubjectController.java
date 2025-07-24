@@ -42,8 +42,8 @@ public class SubjectController implements SubjectControllerEndpoint {
     }
 
     @Override
-    public ResponseEntity<?> getActiveSubjects() {
-        List<SubjectResponse> subjects = subjectService.getAllActiveSubjects();
+    public ResponseEntity<?> getActiveSubjectsBySemesterId(Integer semesterId) {
+        List<SubjectResponse> subjects = subjectService.getAllActiveSubjectsBySemesterId(semesterId);
         if (CollectionUtils.isEmpty(subjects)) {
             return ResponseEntity.noContent().build();
         } else {

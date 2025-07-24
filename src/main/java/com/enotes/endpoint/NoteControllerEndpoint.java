@@ -30,17 +30,32 @@ public interface NoteControllerEndpoint {
 	
 	@Operation(summary = "Save Note", tags = {"Notes", "User"}, description = "User save note")
 	@PostMapping(value="/", consumes = "multipart/form-data")
-	@PreAuthorize(Role_User)
+	@PreAuthorize(Role_Admin)
 	public ResponseEntity<?> saveNote(@RequestParam @Parameter(description = "Json String Notes", required = true, content = @Content(schema = @Schema(implementation = NoteRequest.class))) String notes, @RequestParam(required = false) MultipartFile file) throws Exception;
 	
 	@Operation(summary = "Get All Notes", tags = {"Notes", "User"}, description = "Admin can get all notes")
 	@GetMapping("/getnotes")
 	@PreAuthorize(Role_Admin)
 	public ResponseEntity<?> getAllNotes();
-	
+
+	@Operation(summary = "Get All Notes of user by subject", tags = {"Notes", "User"}, description = "User can get all notes")
+	@GetMapping("/user/subject/{subjectId}")
+	@PreAuthorize(Role_Admin_User)
+	public ResponseEntity<?> getAllMyNotesBySubject(@PathVariable Integer subjectId);
+
+	@Operation(summary = "Get All Notes by subject", tags = {"Notes", "User"}, description = "get all notes")
+	@GetMapping("/subject/{subjectId}")
+	@PreAuthorize(Role_Admin_User)
+	public ResponseEntity<?> getAllNotesBySubject(@PathVariable Integer subjectId);
+
+	@Operation(summary = "Get All Notes of admin by subject", tags = {"Notes", "User"}, description = "User can get all notes")
+	@GetMapping("/admin/subject/{subjectId}")
+	@PreAuthorize(Role_Admin_User)
+	public ResponseEntity<?> getAllNotesAdminBySubject(@PathVariable Integer subjectId);
+
 	@Operation(summary = "Get Note By Id", tags = {"Notes", "User"}, description = "Admin can get note by id")
 	@GetMapping("/{id}")
-	@PreAuthorize(Role_Admin)
+	@PreAuthorize(Role_Admin_User)
 	public ResponseEntity<?> getNoteById(@PathVariable Integer id);
 	
 	@Operation(summary = "Download Note File", tags = {"Notes", "User"}, description = "Admin & User can both download note file")
@@ -81,7 +96,7 @@ public interface NoteControllerEndpoint {
 	
 	@Operation(summary = "Hard Delete Notes", tags = { "Notes", "User" }, description = "Hard Delete Notes")
 	@DeleteMapping("/delete/{id}")
-	@PreAuthorize(Role_User)
+	@PreAuthorize(Role_Admin)
 	public ResponseEntity<?> hardDeleteNotes(@PathVariable Integer id) throws Exception;
 	
 	@Operation(summary = "Empty User Recycle Bin", tags = { "Notes", "User" }, description = "Empty User Recycle Bin")

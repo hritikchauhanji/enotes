@@ -1,5 +1,7 @@
 package com.enotes.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -30,9 +32,11 @@ public class Semester extends BaseModel{
 
     @ManyToOne
     @JoinColumn(name = "course_id")
+    @JsonBackReference
     private Course course;
 
     @OneToMany(mappedBy = "semester", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Subject> subjects;
 
 }

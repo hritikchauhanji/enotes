@@ -28,7 +28,7 @@ public interface CourseControllerEndpoint {
 
 	@Operation(summary = "Get All Active Courses", tags = {"Course"}, description = "Admin and User can view active courses")
 	@GetMapping("/active")
-	@PreAuthorize(Role_Admin_User)
+//	@PreAuthorize(Role_Admin_User)
 	ResponseEntity<?> getActiveCourses();
 
 	@Operation(summary = "Get Course By ID", tags = {"Course"}, description = "Admin can view specific course details")

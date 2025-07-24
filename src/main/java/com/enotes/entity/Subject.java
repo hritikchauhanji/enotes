@@ -1,13 +1,16 @@
 package com.enotes.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 public class Subject extends BaseModel {
 
     @Id
@@ -24,5 +27,6 @@ public class Subject extends BaseModel {
 
     @ManyToOne
     @JoinColumn(name = "semester_id")
+    @JsonBackReference
     private Semester semester;
 }

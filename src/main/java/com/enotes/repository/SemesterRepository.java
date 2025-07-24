@@ -9,7 +9,7 @@ import com.enotes.entity.Semester;
 
 public interface SemesterRepository extends JpaRepository<Semester, Integer> {
 
-    List<Semester> findAllByIsActiveTrue();
+    List<Semester> findAllByIsActiveTrueAndCourseId(Integer courseId);
 
     Optional<Semester> findByIdAndIsDeletedFalse(Integer id);
 

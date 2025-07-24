@@ -45,15 +45,14 @@ public class SubjectServiceImpl implements SubjectService {
         boolean exists = subjectRepository.existsByNameAndSemesterId(
                 subjectRequest.getName().trim(), subjectRequest.getSemesterId());
 
-        if (exists && ObjectUtils.isEmpty(subjectRequest.getId())) {
-            throw new ExistDataException("Subject already exists in this semester.");
-        }
-
         Subject subject = mapper.map(subjectRequest, Subject.class);
         subject.setSemester(semesterRepository.findById(subjectRequest .getSemesterId())
                 .orElseThrow(() -> new ResourceNotFoundException("Semester not found")));
 
         if (ObjectUtils.isEmpty(subject.getId())) {
+            if (exists && ObjectUtils.isEmpty(subjectRequest.getId())) {
+                throw new ExistDataException("Subject already exists in this semester.");
+            }
             subject.setIsDeleted(false);
         } else {
             updateSubject(subject);
@@ -69,26 +68,26 @@ public class SubjectServiceImpl implements SubjectService {
             Subject exist = existing.get();
             subject.setCreatedBy(exist.getCreatedBy());
             subject.setCreatedOn(exist.getCreatedOn());
-            subject.setIsDeleted(exist.getIsDeleted());
+            subject.setIsDeleted(false);
         }
     }
 
     @Override
-    @Cacheable("allSubject")
+//    @Cacheable("allSubject")
     public List<SubjectResponse> getAllSubjects() {
-        return subjectRepository.findByIsDeletedFalse().stream()
+        return subjectRepository.findAll().stream()
                 .map(s -> mapper.map(s, SubjectResponse.class)).toList();
     }
 
     @Override
-    @Cacheable("activeSubject")
-    public List<SubjectResponse> getAllActiveSubjects() {
-        return subjectRepository.findAllByIsActiveTrue().stream()
+//    @Cacheable("activeSubject")
+    public List<SubjectResponse> getAllActiveSubjectsBySemesterId(Integer semesterId) {
+        return subjectRepository.findAllByIsActiveTrueAndSemesterId(semesterId).stream()
                 .map(s -> mapper.map(s, SubjectResponse.class)).toList();
     }
 
     @Override
-    @Cacheable(value = "getSubjectById", key = "#id")
+//    @Cacheable(value = "getSubjectById", key = "#id")
     public SubjectResponse getSubjectById(Integer id) throws Exception {
         Subject subject = subjectRepository.findByIdAndIsDeletedFalse(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Subject not found"));
@@ -96,12 +95,13 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    @CacheEvict(value = "getSubjectById", key = "#id")
+//    @CacheEvict(value = "getSubjectById", key = "#id")
     public Boolean deleteSubjectById(Integer id) {
         Optional<Subject> opt = subjectRepository.findById(id);
         if (opt.isPresent()) {
             Subject subject = opt.get();
             subject.setIsDeleted(true);
+            subject.setIsActive(false);
             subjectRepository.save(subject);
             cacheService.removeCacheById(List.of("allSubject", "activeSubject"));
             return true;

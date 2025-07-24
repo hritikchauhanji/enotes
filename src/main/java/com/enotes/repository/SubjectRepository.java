@@ -9,7 +9,7 @@ import com.enotes.entity.Subject;
 
 public interface SubjectRepository extends JpaRepository<Subject, Integer> {
 
-    List<Subject> findAllByIsActiveTrue();
+    List<Subject> findAllByIsActiveTrueAndSemesterId(Integer semesterId);
 
     Optional<Subject> findByIdAndIsDeletedFalse(Integer id);
 

@@ -42,8 +42,8 @@ public class SemesterController implements SemesterControllerEndpoint {
     }
 
     @Override
-    public ResponseEntity<?> getActiveSemesters() {
-        List<SemesterResponse> semesters = semesterService.getAllActiveSemesters();
+    public ResponseEntity<?> getActiveSemestersByCourseId(Integer courseId) {
+        List<SemesterResponse> semesters = semesterService.getAllActiveSemestersByCourseId(courseId);
         if (CollectionUtils.isEmpty(semesters)) {
             return ResponseEntity.noContent().build();
         } else {

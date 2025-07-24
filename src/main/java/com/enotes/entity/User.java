@@ -1,7 +1,10 @@
 package com.enotes.entity;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,7 +22,7 @@ public class User {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer Id;
+	private Integer id;
 	
 	private String firstName;
 	
@@ -37,8 +40,9 @@ public class User {
 			joinColumns = @JoinColumn(name = "user_id"),
 			inverseJoinColumns = @JoinColumn(name = "role_id")
 	)
-	private List<Role> roles;
-	
+	private Set<Role> roles = new HashSet<>();
+
+
 	@OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
 	@JoinColumn(name = "status_id")
 	private AccountStatus status;

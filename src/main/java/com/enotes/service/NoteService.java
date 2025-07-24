@@ -42,4 +42,10 @@ public interface NoteService {
 	List<FavouriteNotesDto> getUserFavouriteNotes();
 
 	Boolean copyNotes(Integer id) throws Exception;
+
+	NoteResponse getAllMyNotesBySubject(Integer subjectId);
+
+	NoteResponse getAllNotesAdminBySubject(Integer subjectId);
+
+	NoteResponse getAllNotesBySubject(Integer subjectId);
 }

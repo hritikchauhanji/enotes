@@ -11,7 +11,7 @@ public interface SemesterService {
 
     List<SemesterResponse> getAllSemesters();
 
-    List<SemesterResponse> getAllActiveSemesters();
+    List<SemesterResponse> getAllActiveSemestersByCourseId(Integer courseId);
 
     SemesterResponse getSemesterById(Integer id) throws Exception;
 

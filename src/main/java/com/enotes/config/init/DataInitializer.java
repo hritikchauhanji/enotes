@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Slf4j
 @Component
@@ -53,7 +54,7 @@ public class DataInitializer implements ApplicationRunner {
                 admin.setLastName("Admin");
                 admin.setEmail(adminEmail);
                 admin.setPassword(passwordEncoder.encode(adminPassword));
-                admin.setRoles(List.of(adminRole.get()));
+                admin.setRoles(Set.of(adminRole.get()));
                 admin.setStatus(AccountStatus.builder()
                         .isActive(true)
                         .verificationCode(null)

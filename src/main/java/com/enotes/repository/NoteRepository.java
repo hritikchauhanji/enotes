@@ -23,8 +23,17 @@ public interface NoteRepository extends JpaRepository<Notes, Integer> {
 
 	@Query("select n from Notes n where (lower(n.title) like lower(concat('%',:keyword,'%')) "
 			+ "or lower(n.description) like lower(concat('%',:keyword,'%')) "
-			+ "or lower(n.category.name) like lower(concat('%',:keyword,'%'))) "
+			+ "or lower(n.subject.name) like lower(concat('%',:keyword,'%'))) "
 			+ "and n.isDeleted=false "
 			+ "and n.createdBy=:userId")
 	Page<Notes> searchNotes(@Param("keyword") String keyword,@Param("userId") Integer userId, Pageable pageable);
+
+	@Query("SELECT n FROM Notes n WHERE n.subject.id = :subjectId AND n.createdBy IN :adminIds AND n.isDeleted = false")
+	List<Notes> findAdminNotesBySubjectId(@Param("subjectId") Integer subjectId, @Param("adminIds") List<Integer> adminIds);
+
+
+
+	List<Notes> findByIsDeletedFalseAndCreatedByAndSubjectId(Integer userId, Integer subjectId);
+
+    List<Notes> findBySubjectId(Integer subjectId);
 }

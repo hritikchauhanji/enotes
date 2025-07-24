@@ -15,4 +15,6 @@ public class CourseResponse {
 
 	private String name;
 
+	private Boolean isActive;
+
 }

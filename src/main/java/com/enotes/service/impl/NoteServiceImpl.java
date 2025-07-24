@@ -10,7 +10,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
+import com.enotes.dto.*;
+import com.enotes.entity.User;
+import com.enotes.repository.*;
 import org.apache.commons.io.FilenameUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,19 +28,12 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.enotes.dto.FavouriteNotesDto;
-import com.enotes.dto.NoteDto;
-import com.enotes.dto.NoteDto.CategoryDto;
+import com.enotes.dto.NoteDto.SubjectRequest;
 import com.enotes.dto.NoteDto.FileDto;
-import com.enotes.dto.NoteResponse;
 import com.enotes.entity.FavouriteNotes;
 import com.enotes.entity.FileDetails;
 import com.enotes.entity.Notes;
 import com.enotes.exceptionhandling.ResourceNotFoundException;
-import com.enotes.repository.CourseRepository;
-import com.enotes.repository.FavouriteNoteRepository;
-import com.enotes.repository.FileRepository;
-import com.enotes.repository.NoteRepository;
 import com.enotes.service.NoteService;
 import com.enotes.util.CommonUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -51,7 +48,7 @@ public class NoteServiceImpl implements NoteService {
 	private ModelMapper mapper;
 
 	@Autowired
-	private CourseRepository courseRepository;
+	private SubjectRepository subjectRepository;
 
 	@Value("${file.upload.path}")
 	private String uploadpath;
@@ -61,6 +58,9 @@ public class NoteServiceImpl implements NoteService {
 	
 	@Autowired
 	private FavouriteNoteRepository favouriteNoteRepository;
+
+	@Autowired
+	private UserRepository userRepository;
 
 	@Override
 	public Boolean saveNote(String notes, MultipartFile file) throws Exception {
@@ -78,7 +78,7 @@ public class NoteServiceImpl implements NoteService {
 		}
 
 		// category validation
-		checkCategoryExist(noteDto.getCategory());
+		checkSubjectExist(noteDto.getSubject());
 
 		Notes note = mapper.map(noteDto, Notes.class);
 
@@ -157,21 +157,30 @@ public class NoteServiceImpl implements NoteService {
 		return filename;
 	}
 
-	private void checkCategoryExist(CategoryDto category) throws Exception {
-		courseRepository.findById(category.getId())
-				.orElseThrow(() -> new ResourceNotFoundException("Category Id Invalid"));
+	private void checkSubjectExist(SubjectRequest subject) throws Exception {
+		subjectRepository.findById(subject.getId())
+				.orElseThrow(() -> new ResourceNotFoundException("Subject Id Invalid"));
 	}
 
 	@Override
 	public List<NoteDto> getAllNotes() {
-		List<NoteDto> list = noteRepository.findAll().stream().map(note -> mapper.map(note, NoteDto.class)).toList();
+		List<Notes> notes = noteRepository.findAll();
+		List<NoteDto> list = notes.stream().map(note -> {
+			NoteDto dto = mapper.map(note, NoteDto.class);
+			User creator = userRepository.findById(note.getCreatedBy()).orElse(null);
+			if (creator != null) {
+				dto.setCreatedById(creator.getId());
+				dto.setCreatedByFirstName(creator.getFirstName());
+				dto.setCreatedByLastName(creator.getLastName());
+			}
+			return dto;
+		}).toList();
 		return list;
 	}
 
 	@Override
 	public NoteDto getNoteById(Integer id) {
 		Optional<Notes> note = noteRepository.findById(id);
-		mapper.map(note, NoteDto.class);
 		if (!ObjectUtils.isEmpty(note)) {
 			return mapper.map(note, NoteDto.class);
 		}
@@ -200,12 +209,12 @@ public class NoteServiceImpl implements NoteService {
 		List<NoteDto> noteDto = pageNotes.get().map(n -> mapper.map(n, NoteDto.class)).toList();
 		NoteResponse notes = NoteResponse.builder()
 				.notes(noteDto)
-				.pageNo(pageNotes.getNumber())
-				.pageSize(pageNotes.getSize())
-				.totalElements(pageNotes.getTotalElements())
-				.totalPage(pageNotes.getTotalPages())
-				.isFirst(pageNotes.isFirst())
-				.isLast(pageNotes.isLast())
+//				.pageNo(pageNotes.getNumber())
+//				.pageSize(pageNotes.getSize())
+//				.totalElements(pageNotes.getTotalElements())
+//				.totalPage(pageNotes.getTotalPages())
+//				.isFirst(pageNotes.isFirst())
+//				.isLast(pageNotes.isLast())
 				.build();
 		
 		return notes;
@@ -242,12 +251,12 @@ public class NoteServiceImpl implements NoteService {
 	@Override
 	public void hardDeleteNotes(Integer id) throws Exception {
 		Notes notes = noteRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Invalid Id..."));
-		
-		if(notes.getIsDeleted()) {
-			noteRepository.delete(notes);
-		} else {
-			throw new IllegalArgumentException("Sorry You can't hard delete directly");
-		}
+//		if(notes.getIsDeleted()) {
+//			noteRepository.delete(notes);
+//		} else {
+//			throw new IllegalArgumentException("Sorry You can't hard delete directly");
+//		}
+		noteRepository.delete(notes);
 	}
 
 
@@ -287,13 +296,75 @@ public class NoteServiceImpl implements NoteService {
 	public Boolean copyNotes(Integer id) throws Exception {
 		Notes notes = noteRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Invalid id..."));
 		
-		Notes copyNotes = Notes.builder().title(notes.getTitle()).description(notes.getDescription()).course(notes.getCourse()).isDeleted(false).fileDetails(null).build();
+		Notes copyNotes = Notes.builder().title(notes.getTitle()).description(notes.getDescription()).subject(notes.getSubject()).isDeleted(false).fileDetails(null).build();
 		Notes save = noteRepository.save(copyNotes);
 		if(!ObjectUtils.isEmpty(save)) {
 			return true;
 		}
 		return false;
 	}
+
+	@Override
+	public NoteResponse getAllMyNotesBySubject(Integer subjectId) {
+		Integer userId = CommonUtil.getLoggedInUser().getId();
+		List<Notes> notes = noteRepository.findByIsDeletedFalseAndCreatedByAndSubjectId(userId, subjectId);
+
+		List<NoteDto> notesDto = notes.stream().map(note -> {
+			NoteDto dto = mapper.map(note, NoteDto.class);
+			User creator = userRepository.findById(note.getCreatedBy()).orElse(null);
+			if (creator != null) {
+				dto.setCreatedById(creator.getId());
+				dto.setCreatedByFirstName(creator.getFirstName());
+				dto.setCreatedByLastName(creator.getLastName());
+			}
+			return dto;
+		}).toList();
+
+		return NoteResponse.builder().notes(notesDto).build();
+	}
+
+
+	@Override
+	public NoteResponse getAllNotesAdminBySubject(Integer subjectId) {
+		List<Integer> adminIds = userRepository.findAllByRolesName("ADMIN")
+				.stream()
+				.map(User::getId)
+				.collect(Collectors.toList());
+
+		List<Notes> notes = noteRepository.findAdminNotesBySubjectId(subjectId, adminIds);
+
+		List<NoteDto> notesDto = notes.stream().map(note -> {
+			NoteDto dto = mapper.map(note, NoteDto.class);
+			User creator = userRepository.findById(note.getCreatedBy()).orElse(null);
+			if (creator != null) {
+				dto.setCreatedById(creator.getId());
+				dto.setCreatedByFirstName(creator.getFirstName());
+				dto.setCreatedByLastName(creator.getLastName());
+			}
+			return dto;
+		}).toList();
+
+		return NoteResponse.builder().notes(notesDto).build();
+	}
+
+	@Override
+	public NoteResponse getAllNotesBySubject(Integer subjectId) {
+		List<Notes> notes = noteRepository.findBySubjectId(subjectId);
+
+		List<NoteDto> notesDto = notes.stream().map(note -> {
+			NoteDto dto = mapper.map(note, NoteDto.class);
+			User creator = userRepository.findById(note.getCreatedBy()).orElse(null);
+			if (creator != null) {
+				dto.setCreatedById(creator.getId());
+				dto.setCreatedByFirstName(creator.getFirstName());
+				dto.setCreatedByLastName(creator.getLastName());
+			}
+			return dto;
+		}).toList();
+
+		return NoteResponse.builder().notes(notesDto).build();
+	}
+
 
 	@Override
 	public NoteResponse getUserNotesBySearch(Integer pageNo, Integer pageSize, String keyword) {
@@ -303,12 +374,12 @@ public class NoteServiceImpl implements NoteService {
 		List<NoteDto> noteDto = pageNotes.get().map(n -> mapper.map(n, NoteDto.class)).toList();
 		NoteResponse notes = NoteResponse.builder()
 				.notes(noteDto)
-				.pageNo(pageNotes.getNumber())
-				.pageSize(pageNotes.getSize())
-				.totalElements(pageNotes.getTotalElements())
-				.totalPage(pageNotes.getTotalPages())
-				.isFirst(pageNotes.isFirst())
-				.isLast(pageNotes.isLast())
+//				.pageNo(pageNotes.getNumber())
+//				.pageSize(pageNotes.getSize())
+//				.totalElements(pageNotes.getTotalElements())
+//				.totalPage(pageNotes.getTotalPages())
+//				.isFirst(pageNotes.isFirst())
+//				.isLast(pageNotes.isLast())
 				.build();
 		
 		return notes;

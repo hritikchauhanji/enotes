@@ -1,5 +1,6 @@
 package com.enotes.controller;
 
+import com.enotes.service.AuthService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,14 +48,10 @@ public class HomeController implements HomeControllerEndpoint{
 	}
 	
 	@Override
-	public ResponseEntity<?> verifyPasswordResetLink(Integer uid, String code) throws Exception{
-		userService.verifyPswdResetLink(uid,code);
-		return CommonUtil.createBuildResponseMessage("Verification Successful...", HttpStatus.OK);
-	}
-	
-	@Override
 	public ResponseEntity<?> resetPassword(PswdResetRequest pswdResetRequest) throws Exception{
 		userService.resetPswd(pswdResetRequest);
 		return CommonUtil.createBuildResponseMessage("Password reset successfully...", HttpStatus.OK);
 	}
+
+
 }

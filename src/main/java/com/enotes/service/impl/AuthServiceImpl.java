@@ -1,10 +1,12 @@
 package com.enotes.service.impl;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -32,8 +34,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class AuthServiceImpl implements AuthService {
-	
-	
+
+	@Value("${frontend.url}")
+	private String frontendUrl;
 
 	@Autowired
 	private Validation validation;
@@ -93,7 +96,7 @@ public class AuthServiceImpl implements AuthService {
 				+"<br><a href='[[url]]'>Click Me</a>"
 				+"<br><br>Thanks,<br>Enotes.com";
 		
-		message= message.replace("[[url]]", url+"/api/v1/home/verify?uid="+user.getId()+"&&code="+user.getStatus().getVerificationCode());
+		message= message.replace("[[url]]", frontendUrl+"/auth/verify?uid="+user.getId()+"&&code="+user.getStatus().getVerificationCode());
 		
 		EmailRequest emailRequest = EmailRequest.builder()
 				.to(user.getEmail())
@@ -108,7 +111,7 @@ public class AuthServiceImpl implements AuthService {
 		Role userRole = roleRepository.findByName("USER")
 				.orElseThrow(() -> new RuntimeException("Default role ROLE_USER not found"));
 
-		user.setRoles(List.of(userRole));
+		user.setRoles(Set.of(userRole));
 
 	}
 	

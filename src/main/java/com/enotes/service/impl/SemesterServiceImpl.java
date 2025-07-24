@@ -44,15 +44,16 @@ public class SemesterServiceImpl implements SemesterService {
         boolean exists = semesterRepository.existsByNameAndCourseId(
                 semesterRequest.getName().trim(), semesterRequest.getCourseId());
 
-        if (exists && ObjectUtils.isEmpty(semesterRequest.getId())) {
-            throw new ExistDataException("Semester already exists for this course.");
-        }
+
 
         Semester semester = mapper.map(semesterRequest, Semester.class);
         semester.setCourse(courseRepository.findById(semesterRequest.getCourseId())
                 .orElseThrow(() -> new ResourceNotFoundException("Course not found")));
 
         if (ObjectUtils.isEmpty(semester.getId())) {
+            if (exists && ObjectUtils.isEmpty(semesterRequest.getId())) {
+                throw new ExistDataException("Semester already exists for this course.");
+            }
             semester.setIsDeleted(false);
         } else {
             updateSemester(semester);
@@ -68,26 +69,26 @@ public class SemesterServiceImpl implements SemesterService {
             Semester exist = existing.get();
             semester.setCreatedBy(exist.getCreatedBy());
             semester.setCreatedOn(exist.getCreatedOn());
-            semester.setIsDeleted(exist.getIsDeleted());
+            semester.setIsDeleted(false);
         }
     }
 
     @Override
-    @Cacheable("allSemester")
+//    @Cacheable("allSemester")
     public List<SemesterResponse> getAllSemesters() {
-        return semesterRepository.findByIsDeletedFalse().stream()
+        return semesterRepository.findAll().stream()
                 .map(s -> mapper.map(s, SemesterResponse.class)).toList();
     }
 
     @Override
-    @Cacheable("activeSemester")
-    public List<SemesterResponse> getAllActiveSemesters() {
-        return semesterRepository.findAllByIsActiveTrue().stream()
+//    @Cacheable("activeSemester")
+    public List<SemesterResponse> getAllActiveSemestersByCourseId(Integer courseId) {
+        return semesterRepository.findAllByIsActiveTrueAndCourseId(courseId).stream()
                 .map(s -> mapper.map(s, SemesterResponse.class)).toList();
     }
 
     @Override
-    @Cacheable(value = "getSemesterById", key = "#id")
+//    @Cacheable(value = "getSemesterById", key = "#id")
     public SemesterResponse getSemesterById(Integer id) throws  Exception {
         Semester semester = semesterRepository.findByIdAndIsDeletedFalse(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Semester not found"));
@@ -95,12 +96,13 @@ public class SemesterServiceImpl implements SemesterService {
     }
 
     @Override
-    @CacheEvict(value = "getSemesterById", key = "#id")
+//    @CacheEvict(value = "getSemesterById", key = "#id")
     public Boolean deleteSemesterById(Integer id) {
         Optional<Semester> opt = semesterRepository.findById(id);
         if (opt.isPresent()) {
             Semester semester = opt.get();
             semester.setIsDeleted(true);
+            semester.setIsActive(false);
             semesterRepository.save(semester);
             cacheService.removeCacheById(List.of("allSemester", "activeSemester"));
             return true;

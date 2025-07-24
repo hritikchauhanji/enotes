@@ -11,10 +11,10 @@ spring:
     activate:
       on-profile: dev
   datasource:
-    url: jdbc:mysql://localhost:3306/enotes_dev
+    url: ${MYSQL_AIVEN_URL}
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: root
-    password: Hritik@2002
+    username: avnadmin
+    password: ${MYSQL_AIVEN_PASSWORD}
   jpa:
     properties:
       hibernate:
@@ -60,6 +60,8 @@ file:
 admin:
   email: hritikchji@gmail.com
   password: ${EMAIL_PASSWORD}
+frontend:
+  url: http://localhost:5173
 
 ---
 # test Config
@@ -111,10 +113,10 @@ spring:
     activate:
       on-profile: prod
   datasource:
-    url: jdbc:mysql://localhost:3306/enotes_prod
+    url: ${MYSQL_AIVEN_URL}
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: root
-    password: Hritik@2002
+    username: avnadmin
+    password: ${MYSQL_AIVEN_PASSWORD}
   jpa:
     properties:
       hibernate:
@@ -149,6 +151,12 @@ server:
 file:
   upload:
     path: notes/
+admin:
+  email: hritikchji@gmail.com
+  password: ${EMAIL_PASSWORD}
+frontend:
+  url: ${FRONTEND_URL}
+
 ---
 # uat Config
 spring:

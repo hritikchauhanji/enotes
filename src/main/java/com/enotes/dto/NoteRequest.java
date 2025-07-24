@@ -1,7 +1,5 @@
 package com.enotes.dto;
 
-import com.enotes.dto.NoteDto.CategoryDto;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,5 +11,5 @@ public class NoteRequest {
 
 	private String description;
 
-	private CategoryDto category;
+	private SubjectRequest subject;
 }

@@ -46,11 +46,6 @@ public class Validation {
 				}
 			}
 			
-			// validation of description :-
-			if(ObjectUtils.isEmpty(courseRequest.getDescription())) {
-				error.put("description", "Description shouldn't be null or empty");
-			}
-			
 			// validation of Active :-
 			if(ObjectUtils.isEmpty(courseRequest.getIsActive())) {
 				error.put("isActive", "isActive shouldn't be null or empty");
@@ -187,18 +182,6 @@ public class Validation {
 		
 		if(!StringUtils.hasText(userRequest.getPassword()) && !userRequest.getPassword().matches(ConstantUtil.Password_Regex)) {
 			throw new IllegalArgumentException("Password is Invalid...");
-		}
-		
-		if(CollectionUtils.isEmpty(userRequest.getRoles())) {
-			throw new IllegalArgumentException("Roles are Invalid...");
-		} else {
-			List<Integer> roleIds = roleRepository.findAll().stream().map(r->r.getId()).toList();
-			
-			List<Integer> reqRoleIds =  userRequest.getRoles().stream().map(r->r.getId()).filter(roleId -> !roleIds.contains(roleId)).toList();
-			
-			if(!CollectionUtils.isEmpty(reqRoleIds)) {
-				throw new IllegalArgumentException("Roles are Invalid = " + reqRoleIds);
-			}
 		}
 	}
 }

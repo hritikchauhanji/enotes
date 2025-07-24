@@ -1,5 +1,6 @@
 package com.enotes.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -29,5 +30,6 @@ public class Course extends BaseModel{
 	private Boolean isDeleted;
 
 	@OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
+	@JsonManagedReference
 	private List<Semester> semesters;
 }

@@ -27,9 +27,9 @@ public interface SubjectControllerEndpoint {
     ResponseEntity<?> getAllSubjects();
 
     @Operation(summary = "Get All Active Subjects", tags = {"Subject"}, description = "Admin and User can view active subjects")
-    @GetMapping("/active")
+    @GetMapping("/active/by-semester/{semesterId}")
     @PreAuthorize(Role_Admin_User)
-    ResponseEntity<?> getActiveSubjects();
+    ResponseEntity<?> getActiveSubjectsBySemesterId(@PathVariable Integer semesterId);
 
     @Operation(summary = "Get Subject By ID", tags = {"Subject"}, description = "Admin can fetch subject details by ID")
     @GetMapping("/{id}")

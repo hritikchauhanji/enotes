@@ -26,6 +26,12 @@ public class UserResponse {
 	private StatusDto status;
 	
 	private List<RoleDto> roles;
+
+	private SemesterResponse semester;
+
+	private String token;
+
+	private CourseResponse course;
 	
 	@Getter
 	@Setter

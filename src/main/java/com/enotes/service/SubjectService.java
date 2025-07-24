@@ -11,7 +11,7 @@ public interface SubjectService {
 
     List<SubjectResponse> getAllSubjects();
 
-    List<SubjectResponse> getAllActiveSubjects();
+    List<SubjectResponse> getAllActiveSubjectsBySemesterId(Integer semesterId);
 
     SubjectResponse getSubjectById(Integer id) throws Exception;
 

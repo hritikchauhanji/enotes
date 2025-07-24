@@ -51,12 +51,11 @@ public class CourseServiceImpl implements CourseService {
 		// check category exist or not :-
 		Boolean existsByName = courseRepository.existsByName(courseRequest.getName().trim());
 		
-		if(existsByName) {
-			throw new ExistDataException("Category is already exists...");
-		}
-		
 		Course course = mapper.map(courseRequest, Course.class);
 		if(ObjectUtils.isEmpty(course.getId())) {
+			if(existsByName) {
+				throw new ExistDataException("Course is already exists...");
+			}
 			course.setIsDeleted(false);
 //			category.setCreatedBy(1);
 //		category.setCreatedOn(new Date());
@@ -78,30 +77,28 @@ public class CourseServiceImpl implements CourseService {
 			Course existCourse = findById.get();
 			course.setCreatedBy(existCourse.getCreatedBy());
 			course.setCreatedOn(existCourse.getCreatedOn());
-			course.setIsDeleted(existCourse.getIsDeleted());
+			course.setIsDeleted(false);
 //			category.setUpdatedBy(1);
 //			category.setUpdatedOn(new Date());
 		}
 	}
 
 	@Override
-	@Cacheable("allCategory")
+//	@Cacheable("allCategory")
 	public List<CourseResponse> getAllCourse() {
-		List<Course> categories = courseRepository.findByIsDeletedFalse();
-		List<CourseResponse> categoriesDto = categories.stream().map(cat -> mapper.map(cat, CourseResponse.class)).toList();
-		return categoriesDto;
+		List<Course> courses = courseRepository.findAll();
+        return courses.stream().map(course -> mapper.map(course, CourseResponse.class)).toList();
 	}
 
 	@Override
-	@Cacheable("activeCategory")
+//	@Cacheable("activeCategory")
 	public List<CourseResponse> getAllActiveCourse() {
-		List<Course> categories = courseRepository.findAllByIsActiveTrue();
-		List<CourseResponse> categoriesResponse = categories.stream().map(cat -> mapper.map(cat, CourseResponse.class)).toList();
-		return categoriesResponse;
+		List<Course> courses = courseRepository.findAllByIsActiveTrue();
+        return courses.stream().map(course -> mapper.map(course, CourseResponse.class)).toList();
 	}
 
 	@Override
-	@Cacheable(value = "getCategoryById", key = "#id")
+//	@Cacheable(value = "getCategoryById", key = "#id")
 	public CourseResponse getCourseById(Integer id) throws Exception {
 		Course course = courseRepository.findByIdAndIsDeletedFalse(id).orElseThrow(() -> new ResourceNotFoundException("Category not found by id = " + id));
 		if(!ObjectUtils.isEmpty(course)) {
@@ -117,12 +114,13 @@ public class CourseServiceImpl implements CourseService {
 	}
 
 	@Override
-	@CacheEvict(value = "getCategoryById", key = "#id")
+//	@CacheEvict(value = "getCategoryById", key = "#id")
 	public Boolean DeleteCourseById(Integer id) {
 		Optional<Course> findByCategory = courseRepository.findById(id);
 		if(findByCategory.isPresent()) {
 			Course course = findByCategory.get();
 			course.setIsDeleted(true);
+			course.setIsActive(false);
 			courseRepository.save(course);
 			
 			//remove from cache
