@@ -2,8 +2,6 @@ package com.enotes.dto;
 
 import java.util.List;
 
-import com.enotes.entity.Role;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,6 +26,12 @@ public class UserResponse {
 	private StatusDto status;
 	
 	private List<RoleDto> roles;
+
+	private SemesterResponse semester;
+
+	private String token;
+
+	private CourseResponse course;
 	
 	@Getter
 	@Setter

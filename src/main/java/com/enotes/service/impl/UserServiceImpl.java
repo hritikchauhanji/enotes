@@ -2,25 +2,31 @@ package com.enotes.service.impl;
 
 import java.util.UUID;
 
+import com.enotes.dto.*;
+import com.enotes.entity.Course;
+import com.enotes.entity.Semester;
+import com.enotes.repository.CourseRepository;
+import com.enotes.repository.SemesterRepository;
+import com.enotes.service.JwtService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
-import com.enotes.dto.EmailRequest;
-import com.enotes.dto.PasswordChangeRequest;
-import com.enotes.dto.PswdResetRequest;
 import com.enotes.entity.User;
 import com.enotes.exceptionhandling.ResourceNotFoundException;
 import com.enotes.repository.UserRepository;
 import com.enotes.service.UserService;
 import com.enotes.util.CommonUtil;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 @Service
 public class UserServiceImpl implements UserService {
+
+	@Value("${frontend.url}")
+	private String frontendUrl;
 	
 	@Autowired
 	private UserRepository userRepository;
@@ -30,6 +36,18 @@ public class UserServiceImpl implements UserService {
 	
 	@Autowired
 	private EmailService emailService;
+
+	@Autowired
+	private ModelMapper mapper;
+
+	@Autowired
+	private JwtService jwtService;
+
+	@Autowired
+	private CourseRepository courseRepository;
+
+	@Autowired
+	private SemesterRepository semesterRepository;
 
 	@Override
 	public void passwordChange(PasswordChangeRequest passwordChangeRequest) {
@@ -62,9 +80,9 @@ public class UserServiceImpl implements UserService {
 				+"<br><a href='[[url]]'>Change My Password</a>"
 				+"<br>Ignore this message if you don't change your password..."
 				+"<br><br>Thanks,<br>Enotes.com";
-		
-		message= message.replace("[[url]]", url+"/api/v1/home/verify-password-link?uid="+user.getId()+"&&code="+user.getStatus().getPasswordResetToken());
-		
+
+		message= message.replace("[[url]]", frontendUrl+"/auth/reset-password?uid="+user.getId()+"&&code="+user.getStatus().getPasswordResetToken());
+
 		EmailRequest emailRequest = EmailRequest.builder()
 				.to(user.getEmail())
 				.title("Password Reset")
@@ -74,10 +92,21 @@ public class UserServiceImpl implements UserService {
 		emailService.sendEmail(emailRequest);
 	}
 
+
+
 	@Override
-	public void verifyPswdResetLink(Integer uid, String code) throws Exception {
-		User user = userRepository.findById(uid).orElseThrow(() -> new ResourceNotFoundException("Invalid user"));
-		verifyPswdResetToken(user.getStatus().getPasswordResetToken(),code);
+	public void resetPswd(PswdResetRequest pswdResetRequest) throws Exception {
+		User user = userRepository.findById(pswdResetRequest.getUid())
+				.orElseThrow(() -> new ResourceNotFoundException("Invalid user"));
+
+		// Move token verification here
+		verifyPswdResetToken(user.getStatus().getPasswordResetToken(), pswdResetRequest.getToken());
+
+		// Save new password
+		String encodePassword = encoder.encode(pswdResetRequest.getNewPassword());
+		user.setPassword(encodePassword);
+		user.getStatus().setPasswordResetToken(null); // clear token after reset
+		userRepository.save(user);
 	}
 
 	private void verifyPswdResetToken(String existToken, String reqToken) {
@@ -94,12 +123,32 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void resetPswd(PswdResetRequest pswdResetRequest) throws Exception {
-		User user = userRepository.findById(pswdResetRequest.getUid()).orElseThrow(() -> new ResourceNotFoundException("Invalid user"));
-		String encodePassword = encoder.encode(pswdResetRequest.getNewPassword());
-		user.setPassword(encodePassword);
-		user.getStatus().setPasswordResetToken(null);
-		userRepository.save(user);
+	public UserResponse updateUserProfile(UserRequest userRequest) {
+		User user = mapper.map(userRequest, User.class);
+		User existUser = userRepository.findByEmail(user.getEmail());
+		if(!ObjectUtils.isEmpty(existUser)) {
+			existUser.setFirstName(user.getFirstName());
+			existUser.setLastName(user.getLastName());
+			//Load full Course and Semester entities
+			Course course = courseRepository.findById(userRequest.getCourseId())
+					.orElse(null);
+			Semester semester = semesterRepository.findById(userRequest.getSemesterId())
+					.orElse(null);
+			existUser.setCourse(course);
+			existUser.setSemester(semester);
+			existUser.setMobNo(user.getMobNo());
+			userRepository.save(existUser);
+			// Generate updated token
+			String token = jwtService.generateToken(existUser);
+
+			// Map back to UserResponse
+			UserResponse response = mapper.map(existUser, UserResponse.class);
+			response.setToken(token); //Set the token
+
+			return response;
+
+		}
+		return null;
 	}
 
 }

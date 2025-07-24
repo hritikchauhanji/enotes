@@ -1,0 +1,5 @@
+2025-05-12 10:28:20.770 INFO  [File Watcher] o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 2 class path changes (1 addition, 1 deletion, 0 modifications)
+2025-05-12 10:28:20.910 INFO  [Thread-63] o.a.coyote.http11.Http11NioProtocol - Stopping ProtocolHandler ["http-nio-8080"]
+2025-05-12 10:28:21.024 INFO  [Thread-63] o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-05-12 10:28:21.063 INFO  [Thread-63] com.zaxxer.hikari.HikariDataSource - HikariPool-16 - Shutdown initiated...
+2025-05-12 10:28:21.145 INFO  [Thread-63] com.zaxxer.hikari.HikariDataSource - HikariPool-16 - Shutdown completed.

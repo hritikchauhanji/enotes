@@ -3,7 +3,6 @@ package com.enotes.dto;
 import java.util.List;
 
 import com.enotes.entity.Role;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,7 +14,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class UserRequest {
 	
-	private Integer Id;
+	private Integer id;
 
 	private String firstName;
 
@@ -26,17 +25,9 @@ public class UserRequest {
 	private String password;
 
 	private String mobNo;
+
+	private Integer courseId;
+
+	private Integer semesterId;
 	
-	private List<RoleDto> roles;
-	
-	@Getter
-	@Setter
-	@AllArgsConstructor
-	@NoArgsConstructor
-	public static class RoleDto{
-		
-		private Integer id;
-		
-		private String name;
-	}
 }

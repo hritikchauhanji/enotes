@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import com.enotes.entity.User;
 import com.enotes.repository.UserRepository;
 
+import java.util.Optional;
+
 @Service
 public class UserDetailServiceImpl implements UserDetailsService {
 	

@@ -5,35 +5,26 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.enotes.dto.CategoryDto;
-import com.enotes.dto.CategoryResponse;
-import com.enotes.service.Services;
+import com.enotes.dto.CourseRequest;
+import com.enotes.dto.CourseResponse;
+import com.enotes.endpoint.CourseControllerEndpoint;
+import com.enotes.service.CourseService;
 import com.enotes.util.CommonUtil;
 
-import lombok.extern.slf4j.Slf4j;
 
 @RestController
-@RequestMapping("/api/v1/category")
-public class CategoryController {
+public class CourseController implements CourseControllerEndpoint {
 
 	@Autowired
-	private Services services;
+	private CourseService courseService;
 
-	@PostMapping("/save")
-	@PreAuthorize("hasRole('ADMIN')")
-	ResponseEntity<?> saveCategory(@RequestBody CategoryDto categoryDto) {
-		Boolean saveCategory = services.saveCategory(categoryDto);
+	@Override
+	public ResponseEntity<?> saveCourse(CourseRequest courseRequest) {
+		Boolean saveCategory = courseService.saveCourse(courseRequest);
 		if (saveCategory) {
 			return CommonUtil.createBuildResponseMessage("Category saved", HttpStatus.CREATED);
 //			return new ResponseEntity<>("saved", HttpStatus.CREATED);
@@ -43,10 +34,9 @@ public class CategoryController {
 		}
 	}
 
-	@GetMapping("/")
-	@PreAuthorize("hasRole('ADMIN')")
-	ResponseEntity<?> getAllCategory() {
-		List<CategoryDto> getAll = services.getAllCategory();
+	@Override
+	public ResponseEntity<?> getAllCourses() {
+		List<CourseResponse> getAll = courseService.getAllCourse();
 		if (CollectionUtils.isEmpty(getAll)) {
 			return ResponseEntity.noContent().build();
 		} else {
@@ -55,10 +45,9 @@ public class CategoryController {
 		}
 	}
 
-	@GetMapping("/active")
-	@PreAuthorize("hasAnyRole('USER','ADMIN')")
-	ResponseEntity<?> getActiveCategory() {
-		List<CategoryResponse> getAll = services.getAllActiveCategory();
+	@Override
+	public ResponseEntity<?> getActiveCourses() {
+		List<CourseResponse> getAll = courseService.getAllActiveCourse();
 		if (CollectionUtils.isEmpty(getAll)) {
 			return ResponseEntity.noContent().build();
 		} else {
@@ -67,16 +56,15 @@ public class CategoryController {
 		}
 	}
 
-	@GetMapping("/{id}")
-	@PreAuthorize("hasRole('ADMIN')")
-	ResponseEntity<?> getCategoryById(@PathVariable Integer id) throws Exception {
-		CategoryDto categoryDto = services.getCategoryById(id);
-		if (ObjectUtils.isEmpty(categoryDto)) {
+	@Override
+	public ResponseEntity<?> getCourseById(Integer id) throws Exception {
+		CourseResponse courseRequest = courseService.getCourseById(id);
+		if (ObjectUtils.isEmpty(courseRequest)) {
 //			return new ResponseEntity<>("Interval Server Error", HttpStatus.NOT_FOUND);
 			return CommonUtil.createErrorResponseMessage("Internal server error", HttpStatus.NOT_FOUND);
 		} else {
 //			return new ResponseEntity<>(categoryDto, HttpStatus.OK);
-			return CommonUtil.createBuildResponse(categoryDto, HttpStatus.OK);
+			return CommonUtil.createBuildResponse(courseRequest, HttpStatus.OK);
 		}
 //		try {
 //			CategoryDto categoryDto = services.getCategoryById(id);
@@ -93,10 +81,9 @@ public class CategoryController {
 
 	}
 
-	@DeleteMapping("/{id}")
-	@PreAuthorize("hasRole('ADMIN')")
-	ResponseEntity<?> deleteCategoryById(@PathVariable Integer id) {
-		Boolean deleted = services.DeleteCategoryById(id);
+	@Override
+	public ResponseEntity<?> deleteCourseById(Integer id) {
+		Boolean deleted = courseService.DeleteCourseById(id);
 		if (deleted) {
 //			return new ResponseEntity<>("Category delete successfully", HttpStatus.OK);
 			return CommonUtil.createBuildResponseMessage("Category deleted successfully", HttpStatus.OK);

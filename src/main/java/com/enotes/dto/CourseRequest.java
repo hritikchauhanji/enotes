@@ -11,13 +11,11 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CategoryDto {
+public class CourseRequest {
 
 	private Integer id;
 
 	private String name;
-	
-	private String description;
 
 	private Boolean isActive;
 	

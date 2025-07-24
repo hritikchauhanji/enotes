@@ -1,0 +1,30 @@
+package com.enotes.endpoint;
+
+import com.enotes.dto.UserRequest;
+import com.enotes.dto.UserResponse;
+import com.enotes.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import com.enotes.dto.PasswordChangeRequest;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+@Tag(name = "User", description = "Authentication User Operation APIs")
+@RequestMapping("api/v1/user")
+public interface UserControllerEndpoint {
+
+	@Operation(summary = "Get User Profile", tags = { "Notes" }, description = "Get User Profile")
+	@GetMapping("/profile")
+	public ResponseEntity<?> getProfile();
+	
+	@Operation(summary = "User Account Password Change", tags = {
+	"Notes" }, description = "User Account Password Change")
+	@PostMapping("/pass-change")
+	public ResponseEntity<?> passwordChange(@RequestBody PasswordChangeRequest passwordChangeRequest);
+
+	@PutMapping("/update-profile")
+	public ResponseEntity<?> updateProfile(@RequestBody UserRequest userRequest);
+}

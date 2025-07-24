@@ -1,17 +1,16 @@
 package com.enotes.controller;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.ObjectUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.enotes.dto.LoginRequest;
 import com.enotes.dto.LoginResponse;
 import com.enotes.dto.UserRequest;
+import com.enotes.endpoint.AuthControllerEndpoint;
 import com.enotes.service.AuthService;
 import com.enotes.util.CommonUtil;
 
@@ -20,28 +19,27 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/auth")
-public class AuthController {
+public class AuthController implements AuthControllerEndpoint {
 	
 	@Autowired
 	private AuthService authService;
 
-	@PostMapping
-	ResponseEntity<?> register(@RequestBody UserRequest userRequest, HttpServletRequest request) throws Exception{
-		log.info("AuthController : register() : Exceution Start");
+	@Override
+	public ResponseEntity<?> register(UserRequest userRequest, HttpServletRequest request) throws Exception{
+		log.info("AuthController : register() : Execution Start");
 		String url = CommonUtil.getUrl(request);
 		Boolean registerUser = authService.registerUser(userRequest,url);
 		if(!registerUser) {
 			log.info("Error: {}", "Register failed");
 			return CommonUtil.createErrorResponseMessage("Regitration Failed", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		log.info("AuthController : register() : Exceution Start");
+		log.info("AuthController : register() : Execution End");
 		return CommonUtil.createBuildResponseMessage("Registration Successful...", HttpStatus.CREATED);
 		
 	}
 	
-	@PostMapping("/login")
-	ResponseEntity<?> login(@RequestBody LoginRequest request) throws Exception{
+	@Override
+	public ResponseEntity<?> login(LoginRequest request) throws Exception{
 		LoginResponse response = authService.login(request);
 		
 		if(ObjectUtils.isEmpty(response)) {

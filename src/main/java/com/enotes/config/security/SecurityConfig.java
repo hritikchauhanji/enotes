@@ -13,7 +13,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -49,9 +48,9 @@ public class SecurityConfig {
 	@Bean
 	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http.csrf(csrf->csrf.disable())
-		.authorizeHttpRequests(req->req.requestMatchers("api/v1/home/**","api/v1/auth/**").permitAll()
+		.authorizeHttpRequests(req->req.requestMatchers("api/v1/home/**","api/v1/auth/**","/files/**","api/v1/course/active","api/v1/semester/active/by-course/{courseId}","/swagger-ui/**","/v3/api-docs/**","/enotes-doc/**","/enotes-api-doc/**","/actuator/**","/api/v1/cache/**").permitAll()
 				.anyRequest().authenticated())
-		.httpBasic(Customizer.withDefaults())
+//		.httpBasic(Customizer.withDefaults())
 		.sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 		.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 		

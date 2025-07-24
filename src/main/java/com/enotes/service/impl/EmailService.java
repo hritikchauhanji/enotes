@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 
 import com.enotes.dto.EmailRequest;
 
-import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 
 @Component

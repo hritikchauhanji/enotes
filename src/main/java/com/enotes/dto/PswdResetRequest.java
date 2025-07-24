@@ -8,4 +8,6 @@ public class PswdResetRequest {
 	private Integer uid;
 	
 	private String newPassword;
+
+	private String token;
 }

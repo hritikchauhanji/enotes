@@ -12,41 +12,41 @@ import com.enotes.entity.User;
 
 public class CustomUserDetails implements UserDetails{
 
-	private User user;
-	
-	public CustomUserDetails(User user) {
-		super();
-		this.user = user;
-	}
-	
-	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities() {
-		List<SimpleGrantedAuthority> authority = new ArrayList<>();
-		user.getRoles().forEach(r->{
-			authority.add(new SimpleGrantedAuthority("ROLE_"+r.getName()));
-		});
-		
-		return authority;
-	}
+    private User user;
 
-	@Override
-	public String getPassword() {
-		return user.getPassword();
-	}
+    public CustomUserDetails(User user) {
+        super();
+        this.user = user;
+    }
 
-	@Override
-	public String getUsername() {
-		return user.getEmail();
-	}
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        List<SimpleGrantedAuthority> authority = new ArrayList<>();
+        user.getRoles().forEach(r->{
+            authority.add(new SimpleGrantedAuthority("ROLE_"+r.getName()));
+        });
 
-	public User getUser() {
-		return user;
-	}
+        return authority;
+    }
 
-	public void setUser(User user) {
-		this.user = user;
-	}
-	
-	
+    @Override
+    public String getPassword() {
+        return user.getPassword();
+    }
+
+    @Override
+    public String getUsername() {
+        return user.getEmail();
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+
 
 }

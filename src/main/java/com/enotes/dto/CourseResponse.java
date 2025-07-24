@@ -9,12 +9,12 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CategoryResponse {
+public class CourseResponse {
 
 	private Integer id;
 
 	private String name;
 
-	private String description;
+	private Boolean isActive;
 
 }

@@ -1,6 +1,5 @@
 package com.enotes.dto;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -21,9 +20,7 @@ public class NoteDto {
 
 	private String description;
 
-	private CategoryDto category;
-
-	private Integer createdBy;
+	private SubjectRequest subject;
 
 	private Date createdOn;
 
@@ -37,6 +34,11 @@ public class NoteDto {
 
 	private LocalDateTime deletedOn;
 
+	// Add creator name here
+	private Integer createdById;
+	private String createdByFirstName;
+	private String createdByLastName;
+
 	@Getter
 	@Setter
 	@AllArgsConstructor
@@ -47,13 +49,15 @@ public class NoteDto {
 
 		private String displayFileName;
 
+		private String uploadFileName;
+
 	}
 
 	@Getter
 	@Setter
 	@AllArgsConstructor
 	@NoArgsConstructor
-	public static class CategoryDto {
+	public static class SubjectRequest {
 
 		private Integer id;
 

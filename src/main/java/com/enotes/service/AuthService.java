@@ -9,4 +9,5 @@ public interface AuthService {
 	Boolean registerUser(UserRequest userRequest, String url) throws Exception;
 
 	LoginResponse login(LoginRequest request);
+
 }
