@@ -1,14 +1,13 @@
-# Use OpenJDK base image
-FROM eclipse-temurin:17-jdk
-
-# Create app directory
+# ---- Build Stage ----
+FROM maven:3.9.4-eclipse-temurin-17 AS build
 WORKDIR /app
+COPY . .
+RUN mvn clean package -DskipTests
 
-# Copy jar file (rename it if needed)
-COPY target/ENotes-0.0.1-SNAPSHOT.jar app.jar
-
-# Expose port
+# ---- Runtime Stage ----
+FROM eclipse-temurin:17-jdk
+WORKDIR /app
+COPY --from=build /app/target/ENotes-0.0.1-SNAPSHOT.jar app.jar
 EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "app.jar"]
 
-# Run app
-ENTRYPOINT ["java","-jar","app.jar"]
