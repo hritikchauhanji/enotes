@@ -1,6 +1,5 @@
 package com.enotes.controller;
 
-import com.enotes.service.AuthService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +25,7 @@ public class HomeController implements HomeControllerEndpoint{
 	
 	@Autowired
 	private UserService userService;
-	
+
 	@Override
 	public ResponseEntity<?> verify(Integer id, String code) throws Exception{
 		log.info("HomeController : verifyUserAccount() : Exceution Start");
@@ -36,7 +35,7 @@ public class HomeController implements HomeControllerEndpoint{
 			log.info("HomeController : verifyUserAccount() : Exceution End");
 			return CommonUtil.createBuildResponseMessage("Verification Successful", HttpStatus.OK);
 		}
-		
+		log.info("HomeController : verifyUserAccount() : Exceution End");
 		return CommonUtil.createErrorResponseMessage("Invalid Verification Link", HttpStatus.BAD_REQUEST);
 	}
 	
