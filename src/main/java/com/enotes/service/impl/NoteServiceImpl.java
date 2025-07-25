@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 import com.enotes.dto.*;
 import com.enotes.entity.User;
 import com.enotes.repository.*;
+import com.enotes.service.CloudinaryService;
 import org.apache.commons.io.FilenameUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +63,9 @@ public class NoteServiceImpl implements NoteService {
 	@Autowired
 	private UserRepository userRepository;
 
+	@Autowired
+	private CloudinaryService cloudinaryService;
+
 	@Override
 	public Boolean saveNote(String notes, MultipartFile file) throws Exception {
 
@@ -108,41 +112,67 @@ public class NoteServiceImpl implements NoteService {
 		}
 	}
 
+//	private FileDetails saveFileDetails(MultipartFile file) throws Exception {
+//		if (!ObjectUtils.isEmpty(file) && !file.isEmpty()) {
+//			String originalFilename = file.getOriginalFilename();
+//			String extension = FilenameUtils.getExtension(originalFilename);
+//
+//			List<String> extensionAllow = Arrays.asList("pdf", "jpg");
+//			if (!extensionAllow.contains(extension)) {
+//				throw new IllegalAccessException("Invalid file format ! Upload only pdf & jpg");
+//			}
+//
+//			FileDetails fileDtls = new FileDetails();
+//
+//			fileDtls.setOriginalFileName(originalFilename);
+//			fileDtls.setDisplayFileName(getDisplayFileName(originalFilename));
+//
+//			String rndString = UUID.randomUUID().toString();
+//			String uploadFilename = rndString + "." + extension;
+//
+//			fileDtls.setUploadFileName(uploadFilename);
+//			fileDtls.setFileSize(file.getSize());
+//
+//			File saveFile = new File(uploadpath);
+//			if (!saveFile.exists()) {
+//				saveFile.mkdir();
+//			}
+//
+//			String storePath = uploadpath.concat(uploadFilename);
+//			fileDtls.setPath(storePath);
+//
+//			long upload = Files.copy(file.getInputStream(), Paths.get(storePath));
+//			if (upload != 0) {
+//				FileDetails saveFileDtls = fileRepository.save(fileDtls);
+//				return saveFileDtls;
+//			}
+//
+//		}
+//		return null;
+//	}
+
 	private FileDetails saveFileDetails(MultipartFile file) throws Exception {
-		if (!ObjectUtils.isEmpty(file) && !file.isEmpty()) {
+		if (file != null && !file.isEmpty()) {
 			String originalFilename = file.getOriginalFilename();
-			String extension = FilenameUtils.getExtension(originalFilename);
+			String extension = FilenameUtils.getExtension(originalFilename).toLowerCase();
 
-			List<String> extensionAllow = Arrays.asList("pdf", "jpg");
+			List<String> extensionAllow = Arrays.asList("pdf", "jpg", "jpeg", "png");
 			if (!extensionAllow.contains(extension)) {
-				throw new IllegalAccessException("Invalid file format ! Upload only pdf & jpg");
+				throw new IllegalAccessException("Invalid file format! Upload only pdf, jpg, jpeg, png");
 			}
 
-			FileDetails fileDtls = new FileDetails();
+			// Upload to Cloudinary
+			String cloudinaryUrl = cloudinaryService.uploadFile(file); // actual URL
 
-			fileDtls.setOriginalFileName(originalFilename);
-			fileDtls.setDisplayFileName(getDisplayFileName(originalFilename));
+			// Build FileDetails
+			FileDetails fileDetails = new FileDetails();
+			fileDetails.setOriginalFileName(originalFilename);
+			fileDetails.setDisplayFileName(getDisplayFileName(originalFilename));
+			fileDetails.setUploadFileName(cloudinaryUrl);  // cloudinary URL
+			fileDetails.setPath(cloudinaryUrl);            // optional reuse
+			fileDetails.setFileSize(file.getSize());
 
-			String rndString = UUID.randomUUID().toString();
-			String uploadFilename = rndString + "." + extension;
-
-			fileDtls.setUploadFileName(uploadFilename);
-			fileDtls.setFileSize(file.getSize());
-
-			File saveFile = new File(uploadpath);
-			if (!saveFile.exists()) {
-				saveFile.mkdir();
-			}
-
-			String storePath = uploadpath.concat(uploadFilename);
-			fileDtls.setPath(storePath);
-
-			long upload = Files.copy(file.getInputStream(), Paths.get(storePath));
-			if (upload != 0) {
-				FileDetails saveFileDtls = fileRepository.save(fileDtls);
-				return saveFileDtls;
-			}
-
+			return fileRepository.save(fileDetails);
 		}
 		return null;
 	}
