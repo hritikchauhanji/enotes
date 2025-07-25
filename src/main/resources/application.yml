@@ -61,6 +61,11 @@ admin:
   password: ${EMAIL_PASSWORD}
 frontend:
   url: http://localhost:5173
+cloudinary:
+  cloud-name: ${COULD_NAME}
+  api-key: ${CLOUD_API_KEY}
+  api-secret: ${CLOUD_API_SECRET}
+
 
 ---
 # test Config
