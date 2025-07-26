@@ -154,7 +154,7 @@ server:
   port: 8082
 file:
   upload:
-    path: notes/
+    path: /notes
 admin:
   email: hritikchji@gmail.com
   password: ${EMAIL_PASSWORD}
