@@ -2,7 +2,7 @@ spring:
   application:
     name: enotes
   profiles:
-    active: prod
+    active: dev
 ---
 # dev Config
 spring:
@@ -62,7 +62,7 @@ admin:
 frontend:
   url: http://localhost:5173
 cloudinary:
-  cloud-name: ${COULD_NAME}
+  cloud-name: ${CLOUD_NAME}
   api-key: ${CLOUD_API_KEY}
   api-secret: ${CLOUD_API_SECRET}
 
@@ -160,6 +160,10 @@ admin:
   password: ${EMAIL_PASSWORD}
 frontend:
   url: ${FRONTEND_URL}
+cloudinary:
+  cloud-name: ${CLOUD_NAME}
+  api-key: ${CLOUD_API_KEY}
+  api-secret: ${CLOUD_API_SECRET}
 
 ---
 # uat Config

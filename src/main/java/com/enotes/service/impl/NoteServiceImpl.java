@@ -1,17 +1,12 @@
 package com.enotes.service.impl;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import com.cloudinary.Cloudinary;
 import com.enotes.dto.*;
 import com.enotes.entity.User;
 import com.enotes.repository.*;
@@ -63,8 +58,11 @@ public class NoteServiceImpl implements NoteService {
 	@Autowired
 	private UserRepository userRepository;
 
+//	@Autowired
+//	private CloudinaryService cloudinaryService;
+
 	@Autowired
-	private CloudinaryService cloudinaryService;
+	private Cloudinary cloudinary;
 
 	@Override
 	public Boolean saveNote(String notes, MultipartFile file) throws Exception {
@@ -156,22 +154,34 @@ public class NoteServiceImpl implements NoteService {
 			String originalFilename = file.getOriginalFilename();
 			String extension = FilenameUtils.getExtension(originalFilename).toLowerCase();
 
-			List<String> extensionAllow = Arrays.asList("pdf", "jpg", "jpeg", "png");
-			if (!extensionAllow.contains(extension)) {
-				throw new IllegalAccessException("Invalid file format! Upload only pdf, jpg, jpeg, png");
+			if (!"pdf".equals(extension)) {
+				throw new IllegalAccessException("Only PDF files are allowed");
 			}
+// ✅ Generate unique public_id including .pdf
+			String uuid = UUID.randomUUID().toString();
+			String publicId = uuid + ".pdf";  // << IMPORTANT
 
-			// Upload to Cloudinary
-			String cloudinaryUrl = cloudinaryService.uploadFile(file); // actual URL
+			// ✅ Upload to Cloudinary
+			Map uploadResult = cloudinary.uploader().upload(file.getBytes(),
+					com.cloudinary.utils.ObjectUtils.asMap(
+							"resource_type", "raw",
+							"public_id", publicId,
+							"overwrite", true,
+							"use_filename", false,
+							"unique_filename", false
+					)
+			);
 
-			// Build FileDetails
+			String cloudinaryUrl = (String) uploadResult.get("secure_url");
+
+
 			FileDetails fileDetails = new FileDetails();
 			fileDetails.setOriginalFileName(originalFilename);
 			fileDetails.setDisplayFileName(getDisplayFileName(originalFilename));
-			fileDetails.setUploadFileName(cloudinaryUrl);  // cloudinary URL
-			fileDetails.setPath(cloudinaryUrl);            // optional reuse
+			fileDetails.setUploadFileName(cloudinaryUrl);
+			fileDetails.setPath(cloudinaryUrl);
 			fileDetails.setFileSize(file.getSize());
-
+			fileDetails.setPublicId(publicId);
 			return fileRepository.save(fileDetails);
 		}
 		return null;
@@ -280,14 +290,26 @@ public class NoteServiceImpl implements NoteService {
 
 	@Override
 	public void hardDeleteNotes(Integer id) throws Exception {
-		Notes notes = noteRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Invalid Id..."));
-//		if(notes.getIsDeleted()) {
-//			noteRepository.delete(notes);
-//		} else {
-//			throw new IllegalArgumentException("Sorry You can't hard delete directly");
-//		}
+		Notes notes = noteRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Invalid Id..."));
+
+		FileDetails file = notes.getFileDetails();
+
+		// 1. Delete note and file record from DB
 		noteRepository.delete(notes);
+		fileRepository.delete(file);
+
+		// 2. Destroy file from Cloudinary if publicId is present
+		String publicId = file.getPublicId();  // ✅ Use stored public_id
+		if (publicId != null && !publicId.isEmpty()) {
+			cloudinary.uploader().destroy(publicId, com.cloudinary.utils.ObjectUtils.asMap(
+					"resource_type", "raw" // ✅ consistent for PDF notes
+			));
+		}
 	}
+
+
+
 
 
 	@Override

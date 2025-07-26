@@ -22,11 +22,13 @@ public class FileDetails {
 	
 	private String uploadFileName;
 	
-	private String OriginalFileName;
+	private String originalFileName;
 	
 	private String displayFileName;
 	
 	private String path;
 	
 	private Long fileSize;
+
+	private String publicId;
 }
