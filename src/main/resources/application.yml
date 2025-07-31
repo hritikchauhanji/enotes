@@ -65,6 +65,11 @@ cloudinary:
   cloud-name: ${CLOUD_NAME}
   api-key: ${CLOUD_API_KEY}
   api-secret: ${CLOUD_API_SECRET}
+openai:
+  api-key: ${OPENAI_API_KEY}
+#  chat:
+#    model-name: gpt-4o-mini
+#    completions-path: https://api.openai.com/v1/chat/completions
 
 
 ---
@@ -164,6 +169,8 @@ cloudinary:
   cloud-name: ${CLOUD_NAME}
   api-key: ${CLOUD_API_KEY}
   api-secret: ${CLOUD_API_SECRET}
+openai:
+  api-key: ${OPENAI_API_KEY}
 
 ---
 # uat Config
